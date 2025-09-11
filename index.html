@@ -460,18 +460,29 @@ const revealObserver = new IntersectionObserver((entries) => {
 reveals.forEach(r => revealObserver.observe(r));
 
 
-    // Active nav
-    const sections = document.querySelectorAll('main .section[id]');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const sectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const id = entry.target.getAttribute('id');
-          navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
-        }
+// Active nav (highlight as section top reaches viewport)
+const sections = document.querySelectorAll('main .section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.getAttribute('id');
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
       });
-    }, { threshold: 0.5 });
-    sections.forEach(s => sectionObserver.observe(s));
+    }
+  });
+}, {
+  threshold: 0.3,              // 30% of section must be visible
+  rootMargin: "-80px 0px -40% 0px"
+  // top offset ≈ your header height
+  // bottom offset so large sections (like gallery) can still trigger properly
+});
+
+sections.forEach(s => sectionObserver.observe(s));
+
+
 
     // Back-to-top
     const backTop = document.querySelector('.back-to-top');

@@ -69,9 +69,6 @@ body::before {
 .section { padding:110px 0 80px; position:relative; }
 .section h2 { text-align:left; color:#4fe6e6; margin-bottom:18px; font-size:1.6rem; }
 
-/* reveal default (hidden until in view) */
-.reveal { opacity:0; transform: translateY(36px); transition: all 0.9s cubic-bezier(.2,.9,.2,1); }
-.reveal.active { opacity:1; transform: translateY(0); }
 
 /* ---------------------------
    HERO (Home) - plain textual hero
@@ -399,8 +396,15 @@ a[role="button"], .btn { cursor:pointer; }
 /* =========================
    Scroll-trigger Animations
    ========================= */
-.reveal { opacity: 0; transform: translateY(40px); transition: all 0.9s ease; }
-.reveal.active { opacity: 1; transform: translateY(0); }
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.9s ease;
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 /* Direction-based animations */
 .reveal-left  { transform: translateX(-80px); }
@@ -412,15 +416,15 @@ a[role="button"], .btn { cursor:pointer; }
 .reveal-right.active,
 .reveal-top.active,
 .reveal-fade.active {
-  transform: translateX(0) translateY(0) scale(1);
+  transform: none; /* reset all transforms */
   opacity: 1;
 }
 
-/* Sequential delay effect */
-.reveal.active:nth-child(1) { transition-delay: 0.1s; }
-.reveal.active:nth-child(2) { transition-delay: 0.3s; }
-.reveal.active:nth-child(3) { transition-delay: 0.5s; }
-.reveal.active:nth-child(4) { transition-delay: 0.7s; }
+/* Optional stagger effect (apply .stagger on parent container) */
+.stagger .reveal:nth-child(1) { transition-delay: 0.1s; }
+.stagger .reveal:nth-child(2) { transition-delay: 0.25s; }
+.stagger .reveal:nth-child(3) { transition-delay: 0.4s; }
+.stagger .reveal:nth-child(4) { transition-delay: 0.55s; }
 
 /* =========================
    Hover Glow Effect
@@ -760,7 +764,7 @@ color: #aaa; }
   backdrop-filter: blur(6px);
   box-shadow: 0 10px 28px rgba(0,0,0,0.6),
               inset 0 0 12px rgba(79,230,230,0.06);
-  transition: transform .25s ease, box-shadow .25s ease,  .25s ease;
+  transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
 }
 
 /* Hover glow — subtle cyan + red neon accent */
