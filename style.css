@@ -921,3 +921,68 @@ color: #aaa; }
   color: #071015;
   transform: scale(1.07);
 }
+/* =========================
+   Futuristic Animated Background
+   ========================= */
+
+/* Neon blobs that shift around */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -3; /* sits behind everything */
+  background: radial-gradient(circle at 20% 20%, rgba(79,230,230,0.08), transparent 40%),
+              radial-gradient(circle at 80% 60%, rgba(255,82,82,0.08), transparent 40%),
+              radial-gradient(circle at 40% 80%, rgba(79,230,230,0.06), transparent 40%);
+  background-size: 200% 200%;
+  animation: bgShift 20s ease-in-out infinite;
+}
+
+/* Tech grid that slowly floats */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2; /* middle layer */
+  background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridFloat 12s linear infinite;
+}
+
+/* Dark theme overlay stays inside <body> itself */
+body {
+  background: url('media/bg.jpg') center/cover no-repeat fixed;
+  position: relative;
+}
+body::before,
+body::after {
+  pointer-events: none;
+}
+
+/* Animations */
+@keyframes bgShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes gridFloat {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 60px 60px, 60px 60px; }
+}
+
+.project-card-link {
+  text-decoration: none; /* remove underline */
+  color: inherit;        /* keep text colors */
+  display: block;        /* make it behave like a div */
+}
+
+.project-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}

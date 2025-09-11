@@ -188,9 +188,6 @@
           </figure>
         </div>
 
-        <div class="media">
-          <div class="media">
-
   <!-- Video Section -->
   <div class="media-box">
     <label>📺 Favorite YouTube Video:</label>
@@ -351,29 +348,32 @@
     <div class="projects-pyramid">
       <!-- Top Row -->
       <div class="project-row">
-        <div class="project-card">
-          <i class="fa-brands fa-bootstrap project-icon"></i>
-          <h3>Bootstrap</h3>
-          <p>Pure Bootstrap project with responsive design.</p>
-          <a href="boot1.html" target="_blank" class="btn-small">View</a>
-        </div>
+        <a href="boot1.html" target="_blank" class="project-card-link">
+          <div class="project-card">
+            <i class="fa-brands fa-bootstrap project-icon"></i>
+            <h3>Bootstrap</h3>
+            <p>Pure Bootstrap project with responsive design.</p>
+          </div>
+        </a>
 
-        <div class="project-card">
-          <i class="fa-solid fa-paintbrush project-icon"></i>
-          <h3>Bootstrap + CSS</h3>
-          <p>Enhanced Bootstrap project with custom styling.</p>
-          <a href="csswboot.html" target="_blank" class="btn-small">View</a>
-        </div>
+        <a href="csswboot.html" target="_blank" class="project-card-link">
+          <div class="project-card">
+            <i class="fa-solid fa-paintbrush project-icon"></i>
+            <h3>Bootstrap + CSS</h3>
+            <p>Enhanced Bootstrap project with custom styling.</p>
+          </div>
+        </a>
       </div>
 
       <!-- Bottom Row -->
       <div class="project-row center">
-        <div class="project-card">
-          <i class="fa-brands fa-github project-icon"></i>
-          <h3>GitHub Repo</h3>
-          <p>Explore the full source code of this personal site.</p>
-          <a href="https://github.com/clarizasalva1-cmd/My-Personal-Website" target="_blank" class="btn-small">Go</a>
-        </div>
+        <a href="https://github.com/clarizasalva1-cmd/My-Personal-Website" target="_blank" class="project-card-link">
+          <div class="project-card">
+            <i class="fa-brands fa-github project-icon"></i>
+            <h3>GitHub Repo</h3>
+            <p>Explore the full source code of this personal site.</p>
+          </div>
+        </a>
       </div>
     </div>
   </div>
@@ -406,9 +406,6 @@
       </div>
     </section>
   </main>
-</body>
-</html>
-   </main>
 
   <!-- FOOTER -->
   <footer class="site-footer">
@@ -422,75 +419,71 @@
 
   <!-- JS -->
   <script>
-    // Mobile nav toggle
-    const navToggle = document.getElementById('navToggle');
-    const siteNav = document.querySelector('.site-nav');
-    navToggle.addEventListener('click', () => {
-      siteNav.classList.toggle('open');
-      navToggle.classList.toggle('open');
-    });
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const siteNav = document.querySelector('.site-nav');
+  navToggle.addEventListener('click', () => {
+    siteNav.classList.toggle('open');
+    navToggle.classList.toggle('open');
+  });
 
-    // Smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        if (href.startsWith('#')) {
-          e.preventDefault();
-          document.querySelector(href).scrollIntoView({ behavior: 'smooth', block: 'start' });
-          if (siteNav.classList.contains('open')) {
-            siteNav.classList.remove('open');
-            navToggle.classList.remove('open');
-          }
+  // Smooth scroll (only for internal # links)
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const href = this.getAttribute('href');
+      if (href && href.startsWith('#') && href.length > 1) {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-      });
+        if (siteNav.classList.contains('open')) {
+          siteNav.classList.remove('open');
+          navToggle.classList.remove('open');
+        }
+      }
     });
-
-  // Reveal on scroll with direction support
-const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-top, .reveal-fade');
-
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('active');
-      revealObserver.unobserve(entry.target); // run once
-    }
   });
-}, { threshold: 0.15 });
 
-reveals.forEach(r => revealObserver.observe(r));
-
-
-// Active nav (highlight as section top reaches viewport)
-const sections = document.querySelectorAll('main .section[id]');
-const navLinks = document.querySelectorAll('.nav-link');
-
-const sectionObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.getAttribute('id');
-      navLinks.forEach(a => {
-        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
-      });
-    }
-  });
-}, {
-  threshold: 0.3,              // 30% of section must be visible
-  rootMargin: "-80px 0px -40% 0px"
-  // top offset ≈ your header height
-  // bottom offset so large sections (like gallery) can still trigger properly
-});
-
-sections.forEach(s => sectionObserver.observe(s));
-
-
-
-    // Back-to-top
-    const backTop = document.querySelector('.back-to-top');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > window.innerHeight / 2) backTop.classList.add('show');
-      else backTop.classList.remove('show');
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-top, .reveal-fade');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        revealObserver.unobserve(entry.target);
+      }
     });
-  </script>
+  }, { threshold: 0.15 });
+  reveals.forEach(r => revealObserver.observe(r));
+
+  // Active nav highlight
+  const sections = document.querySelectorAll('.section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute("id");
+        document.querySelectorAll(".nav-link").forEach(a => {
+          a.classList.toggle("active", a.getAttribute("href") === "#" + id);
+        });
+      }
+    });
+  }, {
+    threshold: 0.5,
+    rootMargin: "-50% 0px -50% 0px"
+  });
+
+  // ✅ This was missing
+  sections.forEach(section => sectionObserver.observe(section));
+
+  // Back-to-top
+  const backTop = document.querySelector('.back-to-top');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > window.innerHeight / 2) backTop.classList.add('show');
+    else backTop.classList.remove('show');
+  });
+</script>
 
 </body>
 </html>
