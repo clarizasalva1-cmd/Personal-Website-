@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Clariza Personal Site</title>
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" href="Media/katana-icon.png" type="image/png">
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+   <!-- NAVIGATION -->
+  <header class="site-header">
+    <div class="nav-inner">
+      <h1 class="logo"><i class="fa-solid fa-star"></i> <span class="clariza">CLARIZA</span><span class="salva">SALVA</span></h1>
+      <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">
+        <i class="fa fa-bars"></i>
+      </button>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="#home" class="nav-link">Home</a></li>
+          <li><a href="#about" class="nav-link">About Me</a></li>
+          <li><a href="#gallery" class="nav-link">Gallery</a></li>
+          <li><a href="#schedule" class="nav-link">Schedule</a></li>
+          <li><a href="#projects" class="nav-link">Projects</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HOME -->
+    <section id="home" class="section section-hero reveal" aria-labelledby="hero-title">
+      <div class="container hero-container">
+        <div class="hero-left">
+          <h2 id="hero-title" class="hero-title orbitron">⚡ Strong, Fearless, and Always Astig ⚡</h2>
+          <p class="hero-tagline orbitron">Welcome to my universe of courage, creativity, and determination — where passion meets purpose.</p>
+          <a class="btn btn-primary" href="#about">Discover About Me</a>
+        </div>
+
+        <!-- Floating Projects Card -->
+        <div class="hero-right">
+          <div class="floating-card">
+            <div class="card-inner">
+              <div class="card-front">
+                <h3>Check out my works and creations</h3>
+                <i class="fa-solid fa-folder-open big-icon"></i>
+              </div>
+              <div class="card-back">
+                <h3>My Projects</h3>
+                <p>Click to explore my latest creations!</p>
+                <a href="#projects" class="btn btn-outline">See Projects</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+   <section id="about" class="section reveal" aria-labelledby="about-title">
+      <div class="container about-container">
+        <h2 id="about-title" class="orbitron">About Me</h2>
+        <div class="about-grid">
+
+          <!-- Left: Portrait -->
+          <div class="about-left">
+            <div class="portrait-card">
+              <svg class="portrait-dots" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <pattern id="dots" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+                    <circle cx="1.5" cy="1.5" r="0.9" fill="rgba(255,255,255,0.06)" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#dots)"></rect>
+              </svg>
+
+              <div class="portrait-frame">
+                <img src="Media/mypic5.jpg" alt="Clariza Mae B. Salva portrait" />
+              </div>
+            </div>
+          </div>
+
+           <!-- Right -->
+          <div class="about-right">
+            <p>Hello! I’m <strong>Clariza Mae B. Salva</strong>, a passionate student who loves technology, music, and martial arts.</p>
+            <blockquote class="quote"><i>"Be fierce, be bold, be unstoppable."</i></blockquote>
+            <p>I sharpen my skills in <strong>Arnis</strong>, express myself through music, and sometimes dive into the gaming world.</p>
+
+            <aside class="goals">
+              <h3 class="orbitron">My Goals</h3>
+              <ol class="hover-list">
+                <li>🎓 Graduate with excellence in BSIT</li>
+                <li>🥋 Achieve mastery in Arnis</li>
+                <li>💻 Become a professional web developer</li>
+                <li>🎶 Grow my passion in music</li>
+                <li>🌍 Inspire others</li>
+              </ol>
+            </aside>
+
+            <h3>Skills and Knowledge</h3>
+            <dl class="hover-dl">
+              <dt>HTML</dt><dd>Structures web pages.</dd>
+              <dt>CSS</dt><dd>Adds design and layout.</dd>
+              <dt>Arnis</dt><dd>Filipino martial art that improves focus and discipline.</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- GALLERY (kept original content) -->
+    <section id="gallery" class="section reveal" aria-labelledby="gallery-title">
+      <div class="container">
+        <h2 id="gallery-title">Gallery</h2>
+
+        <h3>Skills</h3>
+        <p class="skill-intro">
+          My martial arts journey honed me in <b>discipline, reflexes, precision, and leadership</b> — all shaped by the art of Arnis.
+        </p>
+
+        <div class="grid-gallery">
+          <figure>
+            <img src="Media/gm-rodel.jpg" alt="Arnis Grandmaster">
+            <figcaption>
+              <b>Discipline:</b> Trained under <b>Grand Master Rodel Dagooc</b>, protégé of the late <b>Grand Master Remy Amador Presas</b>, the <i>Father of Modern Arnis</i>.
+            </figcaption>
+          </figure>
+          <figure>
+            <img src="Media/smokingsticks.jpg" alt="DAS group">
+            <figcaption>
+              <b>Collaboration:</b> Learned with the <b>Smoking Sticks Dagooc Arnis System</b>, pioneered by a foreign martial artist who spread Arnis worldwide.
+            </figcaption>
+          </figure>
+          <figure>
+            <img src="Media/my_group.jpg" alt="Arnis team">
+            <figcaption><b>Leadership:</b> Practicing with peers helped me mentor others while refining my own skills.</figcaption>
+          </figure>
+          <figure>
+            <img src="Media/musikahandemo.jpg" alt="Demo performance">
+            <figcaption><b>Performance:</b> Represented Filipino culture through Arnis at Musikahan sa Tagum.</figcaption>
+          </figure>
+        </div>
+
+        <h3>Hobbies</h3>
+        <div class="grid-gallery">
+          <figure>
+            <img src="Media/guitar.jpg" alt="Guitar">
+            <figcaption>Playing guitar is my stress-reliever and passion.</figcaption>
+          </figure>
+          <figure>
+            <img src="Media/gitaracover.jpg" alt="Guitar 2">
+            <figcaption>Another side of me — jamming with my guitar.</figcaption>
+          </figure>
+          <figure>
+            <img src="Media/ps5.jpg" alt="Gaming">
+            <figcaption>Used to play <b>PS5 & Nintendo Switch</b> when I had time.</figcaption>
+          </figure>
+          <figure>
+            <img src="Media/sword.jpg" alt="Katana">
+            <figcaption>Practicing Arnis but with <b>katanas</b> — lighter, faster, fiercer.</figcaption>
+          </figure>
+        </div>
+
+        <h3>Favorites</h3>
+        <div class="grid-gallery">
+          <figure>
+            <img src="Media/mama&papa.jpg" alt="Family">
+            <figcaption>Unforgettable <b>event with my family mama and papa</b>.</figcaption>
+          </figure>
+          <figure>
+            <img src="Media/shs-grad.jpg" alt="Graduation">
+            <figcaption><b>SHS graduation</b> with my BFF — milestone moment.</figcaption>
+          </figure>
+          <figure>
+            <img src="Media/cousin.jpg" alt="Cousins">
+            <figcaption>Happy bonding with <b>my cousins</b>.</figcaption>
+          </figure>
+          <figure>
+            <img src="Media/lomlhehe2.jpg" alt="Love">
+            <figcaption>With <b>the love of my life</b>❤️.</figcaption>
+          </figure>
+        </div>
+
+        <div class="media">
+          <div class="media">
+
+  <!-- Video Section -->
+  <div class="media-box">
+    <label>📺 Favorite YouTube Video:</label>
+    <div class="video-container square-video">
+      <iframe src="https://www.youtube.com/embed/PDSkFeMVNFs?si=DiZHpfEfJlsb1BYe" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <div class="media-box">
+    <label>🎬 Arnis Demo:</label>
+    <div class="video-container square-video">
+      <video controls>
+        <source src="Media/newlocalvid.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+
+  <!-- Music Cards Section -->
+  <div class="media-box full-width">
+    <label>🎵 My Favorite Music:</label>
+    <div class="music-row">
+      
+      
+  <!-- Song Card 1 -->
+  <div class="gallery-item music-card">
+    <img src="Media/yellowbg.jpg" alt="Yellow Album" class="album-art">
+    <div class="song-info">
+      <h4>Yellow</h4>
+      <p>Coldplay</p>
+      <audio controls>
+        <source src="Media/favsong.webm" type="audio/webm">
+      </audio>
+    </div>
+  </div>
+
+  <!-- Song Card 2 -->
+  <div class="gallery-item music-card">
+    <img src="Media/sukidakarabg.jpg" alt="Sukidakara Album" class="album-art">
+    <div class="song-info">
+      <h4>Sukidakara</h4>
+      <p>Yuika</p>
+      <audio controls>
+        <source src="Media/sukidakara.webm" type="audio/webm">
+      </audio>
+    </div>
+  </div>
+
+  <!-- Song Card 3 -->
+  <div class="gallery-item music-card">
+    <img src="Media/blueskybg.jpg" alt="Blue Sky Album" class="album-art">
+    <div class="song-info">
+      <h4>Blue Sky</h4>
+      <p>Hale</p>
+      <audio controls>
+        <source src="Media/bluesky.webm" type="audio/webm">
+      </audio>
+    </div>
+  </div>
+</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+    <!-- SCHEDULE: kept unchanged content (tables preserved) -->
+    <section id="schedule" class="section reveal" aria-labelledby="schedule-title">
+      <div class="container">
+        <h2 id="schedule-title" class="orbitron">My Class Schedule</h2>
+        <table class="highlight-table">
+          <caption>Detailed Subject Schedule</caption>
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Time</th>
+              <th>Subject</th>
+              <th>Room</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td rowspan="4">Wed - Thu</td>
+              <td>10am - 12pm</td>
+              <td>Web Systems & Technologies</td>
+              <td>AcerLab</td>
+            </tr>
+            <tr>
+              <td>1pm - 3pm</td>
+              <td>Standard American English</td>
+              <td>AB-108</td>
+            </tr>
+            <tr>
+              <td>3pm - 5pm</td>
+              <td>Human Computer Interaction</td>
+              <td>ACAD1</td>
+            </tr>
+            <tr>
+              <td>5:30pm - 7:30pm</td>
+              <td>Data Structures & Algorithms</td>
+              <td>AcerLab</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="orbitron">Weekly Class Timetable</h3>
+        <table class="highlight-table">
+          <caption>Weekly Subject Overview</caption>
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Morning</th>
+              <th>Afternoon</th>
+              <th>Evening</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Monday</td>
+              <td>Free</td>
+              <td>Free</td>
+              <td>Free</td>
+            </tr>
+            <tr>
+              <td>Tuesday</td>
+              <td>Free</td>
+              <td>Free</td>
+              <td>Free</td>
+            </tr>
+            <tr>
+              <td>Wednesday</td>
+              <td>Web Systems & Technologies</td>
+              <td>Standard American English / HCI</td>
+              <td>Data Structures & Algorithms</td>
+            </tr>
+            <tr>
+              <td>Thursday</td>
+              <td>Web Systems & Technologies</td>
+              <td>Standard American English / HCI</td>
+              <td>Data Structures & Algorithms</td>
+            </tr>
+            <tr>
+              <td>Friday</td>
+              <td>Free</td>
+              <td>Free</td>
+              <td>Free</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+      <!-- PROJECTS -->
+<section id="projects" class="section reveal" aria-labelledby="projects-title">
+  <div class="container">
+    <h2 id="projects-title" class="orbitron">🚀 My Projects</h2>
+
+    <div class="projects-pyramid">
+      <!-- Top Row -->
+      <div class="project-row">
+        <div class="project-card">
+          <i class="fa-brands fa-bootstrap project-icon"></i>
+          <h3>Bootstrap</h3>
+          <p>Pure Bootstrap project with responsive design.</p>
+          <a href="boot1.html" target="_blank" class="btn-small">View</a>
+        </div>
+
+        <div class="project-card">
+          <i class="fa-solid fa-paintbrush project-icon"></i>
+          <h3>Bootstrap + CSS</h3>
+          <p>Enhanced Bootstrap project with custom styling.</p>
+          <a href="csswboot.html" target="_blank" class="btn-small">View</a>
+        </div>
+      </div>
+
+      <!-- Bottom Row -->
+      <div class="project-row center">
+        <div class="project-card">
+          <i class="fa-brands fa-github project-icon"></i>
+          <h3>GitHub Repo</h3>
+          <p>Explore the full source code of this personal site.</p>
+          <a href="https://github.com/clarizasalva1-cmd/My-Personal-Website" target="_blank" class="btn-small">Go</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- CONTACT -->
+    <section id="contact" class="section reveal" aria-labelledby="contact-title">
+      <div class="container contact-grid">
+        <div class="socials">
+          <a href="https://www.facebook.com/share/1Cu3i6Amfm/" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+          <a href="https://www.instagram.com/sndysquirrl" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+          <a href="mailto:clariza.salva1@gmail.com"><i class="fas fa-envelope"></i> Email</a>
+          <a href="https://github.com/clarizasalva1-cmd" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+       <div class="map-container">
+            <h3>📍 My Location</h3>
+            <details>
+              <summary>Click to show map</summary> <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.4011900084793!2d125.66480077476095!3d7.308745592699128!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32f9451659cb3ded%3A0x91dde5f667b8c592!2sNew%20Visayas%20Barangay%20Hall!5e0!3m2!1sen!2sph!4v1756212310151!5m2!1sen!2sph" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        <div class="feedback-form">
+          <h3>Get in Touch!</h3>
+          <form>
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea rows="5" placeholder="Your Message" required></textarea>
+            <button type="submit" class="btn btn-primary">Send</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+   </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>⚡ Clariza Salva | <strong>ASTIG MAANGAS</strong> © 2025 | All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <a class="back-to-top" href="#home" aria-label="Back to top">⬆</a>
+
+  <!-- JS -->
+  <script>
+    // Mobile nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const siteNav = document.querySelector('.site-nav');
+    navToggle.addEventListener('click', () => {
+      siteNav.classList.toggle('open');
+      navToggle.classList.toggle('open');
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href.startsWith('#')) {
+          e.preventDefault();
+          document.querySelector(href).scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (siteNav.classList.contains('open')) {
+            siteNav.classList.remove('open');
+            navToggle.classList.remove('open');
+          }
+        }
+      });
+    });
+
+  // Reveal on scroll with direction support
+const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-top, .reveal-fade');
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+      revealObserver.unobserve(entry.target); // run once
+    }
+  });
+}, { threshold: 0.15 });
+
+reveals.forEach(r => revealObserver.observe(r));
+
+
+    // Active nav
+    const sections = document.querySelectorAll('main .section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+        }
+      });
+    }, { threshold: 0.5 });
+    sections.forEach(s => sectionObserver.observe(s));
+
+    // Back-to-top
+    const backTop = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > window.innerHeight / 2) backTop.classList.add('show');
+      else backTop.classList.remove('show');
+    });
+  </script>
+
+</body>
+</html>

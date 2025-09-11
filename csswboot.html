@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🌟 Motivational Hub</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <div class="d-flex vh-100">
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar d-flex flex-column justify-content-between p-3 text-white">
+      <div>
+        <div class="d-flex align-items-center justify-content-between mb-4 toggle-btn" onclick="toggleSidebar()">
+          <h1 class="fs-5 fw-bold m-0 logo-text">🌟 Inspire</h1>
+          <span class="fs-3 nav-toggle">&#9776;</span>
+        </div>
+        <ul class="list-unstyled" id="menu">
+          <li class="sidebar-item active-item" onclick="showContent(this, 'home')">
+            <span>🏠</span> <span class="label">Home</span>
+          </li>
+          <li class="sidebar-item" onclick="showContent(this, 'quotes')">
+            <span>💬</span> <span class="label">Quotes</span>
+          </li>
+          <li class="sidebar-item" onclick="showContent(this, 'favorites')">
+            <span>📜</span> <span class="label">Favorites</span>
+          </li>
+          <li class="sidebar-item" onclick="showContent(this, 'daily')">
+            <span>📚</span> <span class="label">Daily Motivation</span>
+          </li>
+          <li class="sidebar-item" onclick="showContent(this, 'settings')">
+            <span>⚙️</span> <span class="label">Settings</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Profile Dropdown -->
+      <div class="dropdown profile">
+        <div
+          class="sidebar-item d-flex align-items-center gap-2"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <span>👤</span> <span class="label">Profile</span>
+        </div>
+        <ul class="dropdown-menu dropdown-menu-dark">
+          <li><a class="dropdown-item" href="#">Account Settings</a></li>
+          <li>
+            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
+              Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-grow-1 content p-4 d-flex flex-column align-items-center justify-content-center text-center" id="content">
+      <h2 class="fw-bold">🌟 Welcome</h2>
+      <p class="fs-4">"The best way to get started is to quit talking and begin doing." – Walt Disney</p>
+    </div>
+  </div>
+
+  <!-- Logout Confirmation Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to logout?
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+          <button type="button" class="btn btn-danger">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Toggle sidebar collapse
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("collapsed");
+    }
+
+    // Show content based on clicked menu
+    function showContent(element, section) {
+      document.querySelectorAll(".sidebar-item").forEach((item) => {
+        item.classList.remove("active-item");
+      });
+      element.classList.add("active-item");
+
+      const content = document.getElementById("content");
+
+      if (section === "home") {
+        content.innerHTML = `
+          <h2 class="fw-bold">🌟 Welcome</h2>
+          <p class="fs-4">"The best way to get started is to quit talking and begin doing." – Walt Disney</p>
+        `;
+      } else if (section === "quotes") {
+        content.innerHTML = `
+          <h2 class="fw-bold">💬 Quotes</h2>
+          <p class="fs-4">"Believe in yourself. You are capable of amazing things."</p>
+          <p class="fs-4">"Success is not final, failure is not fatal: it is the courage to continue that counts."</p>
+        `;
+      } else if (section === "favorites") {
+        content.innerHTML = `
+          <h2 class="fw-bold">📜 Favorites</h2>
+          <p class="fs-4">"Your story is still being written. Keep going!"</p>
+        `;
+      } else if (section === "daily") {
+        content.innerHTML = `
+          <h2 class="fw-bold">📚 Daily Motivation</h2>
+          <p class="fs-4">"Start each day with a positive thought and a grateful heart."</p>
+        `;
+      } else if (section === "settings") {
+        content.innerHTML = `
+          <h2 class="fw-bold">⚙️ Settings</h2>
+          <form class="text-start mt-3" onsubmit="applySettings(event)">
+            <div class="mb-3">
+              <label class="form-label">Theme</label>
+              <select class="form-select" id="themeSelect">
+                <option value="default">Default</option>
+                <option value="dark">Dark</option>
+                <option value="sunset">Sunset</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Font Size</label>
+              <select class="form-select" id="fontSizeSelect">
+                <option value="normal">Normal</option>
+                <option value="large">Large</option>
+                <option value="xlarge">Extra Large</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Apply</button>
+          </form>
+        `;
+      }
+    }
+
+    // Apply settings
+    function applySettings(event) {
+      event.preventDefault();
+      const theme = document.getElementById("themeSelect").value;
+      const fontSize = document.getElementById("fontSizeSelect").value;
+
+      // Apply theme
+      if (theme === "default") {
+        document.body.style.background = "linear-gradient(135deg, #74ebd5, #acb6e5)";
+      } else if (theme === "dark") {
+        document.body.style.background = "#2c3e50";
+      } else if (theme === "sunset") {
+        document.body.style.background = "linear-gradient(135deg, #ff9a9e, #fecfef)";
+      }
+
+      // Apply font size
+      if (fontSize === "normal") {
+        document.getElementById("content").style.fontSize = "1rem";
+      } else if (fontSize === "large") {
+        document.getElementById("content").style.fontSize = "1.25rem";
+      } else if (fontSize === "xlarge") {
+        document.getElementById("content").style.fontSize = "1.5rem";
+      }
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+/* Global background */
+body {
+  background: linear-gradient(135deg, #74ebd5, #acb6e5);
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  background: #2c3e50;
+  width: 240px;
+  transition: all 0.3s ease-in-out;
+  border-right: 3px solid #74ebd5;
+}
+
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar.collapsed .label,
+.sidebar.collapsed .logo-text {
+  display: none;
+}
+
+.sidebar-item {
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  color: #ecf0f1;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(116, 235, 213, 0.3);
+  transform: translateX(5px);
+}
+
+.active-item {
+  background-color: rgba(236, 240, 241, 0.2);
+  border-left: 3px solid #74ebd5;
+}
+
+.toggle-btn {
+  cursor: pointer;
+  color: #74ebd5;
+}
+
+.profile {
+  margin-top: auto;
+  border-top: 1px solid #34495e;
+  padding-top: 10px;
+}
+
+/* Content Area */
+.content {
+  color: #2c3e50;
+}
+
+.content h2 {
+  color: #34495e;
+  margin-bottom: 20px;
+}
+
+.content p {
+  font-style: italic;
+  max-width: 700px;
+}
+
+/* Navigation toggle button */
+.nav-toggle {
+  color: #74ebd5;
+  cursor: pointer;
+}
+</style>
+
+</body>
+</html>
