@@ -8,10 +8,33 @@
       font-family: Arial, sans-serif;
       margin: 0;
       height: 100vh;
-      background: linear-gradient(135deg, #0a4c5a, #2a9d8f); /* gradient background */
       display: flex;
       justify-content: center;
       align-items: center;
+      overflow: hidden; /* so particles don't scroll */
+
+      /* Animated gradient */
+      background: linear-gradient(270deg, #0a4c5a, #2a9d8f, #e76f51, #264653);
+      background-size: 800% 800%;
+      animation: gradientAnimation 20s ease infinite;
+    }
+
+    /* Gradient animation */
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Canvas for particles */
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none; /* let clicks pass through */
     }
 
     .container {
@@ -23,6 +46,8 @@
       border-radius: 10px;
       overflow: hidden;
       transition: all 0.3s ease;
+      z-index: 1; /* ensure it stays above particles */
+      position: relative;
     }
 
     .container.calculator-mode {
@@ -309,6 +334,8 @@
   </style>
 </head>
 <body>
+<canvas id="particles"></canvas>
+
 <div class="container">
 
   <!-- LEFT PANEL -->
@@ -576,6 +603,61 @@
   function logout() {
     showSection('loginSection');
   }
+
+  // === PARTICLE BACKGROUND ===
+  const canvas = document.getElementById("particles");
+  const ctx = canvas.getContext("2d");
+  let particlesArray;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.size = Math.random() * 3 + 1;
+      this.speedX = (Math.random() - 0.5) * 1.5;
+      this.speedY = (Math.random() - 0.5) * 1.5;
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+
+      if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+      if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+    }
+    draw() {
+      ctx.fillStyle = "rgba(255,255,255,0.7)";
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+
+  function initParticles() {
+    particlesArray = [];
+    for (let i = 0; i < 80; i++) {
+      particlesArray.push(new Particle());
+    }
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particlesArray.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    requestAnimationFrame(animateParticles);
+  }
+
+  initParticles();
+  animateParticles();
 </script>
 </body>
 </html>
