@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FlowList — Interactive To-Do App</title>
+<style>
+:root{
+  --bg:#0b0f1a;
+  --card:rgba(255,255,255,0.04);
+  --accent:#6df7c1;
+  --accent-2:#7b7ff7;
+  --danger:#ff6b6b;
+  --muted:#a5b3c5;
+  font-family: Inter, system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body {
+  height: 100%;
+  margin: 0;
+  background: url("Media/trybg12.png") no-repeat center center fixed;
+  background-size: cover;
+  color: #e6eef6;
+  overflow-x: hidden;
+}
+
+/* Optional overlay for dimming */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35); /* darken background slightly */
+  z-index: -1;
+}
+
+@keyframes bgFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+.app {
+  max-width: 920px;
+  margin: 32px auto;
+  padding: 24px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.45);
+}
+
+/* header */
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+h1{margin:0;font-size:22px;font-weight:800}
+.btn{
+  background: linear-gradient(90deg,var(--accent),var(--accent-2));
+  border:none;color:#021;font-weight:800;padding:10px 16px;border-radius:12px;cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,0.35);transition:0.18s;
+}
+.btn:hover{ transform: translateY(-2px) }
+
+/* layout */
+.layout{ display:grid; grid-template-columns: 2fr 1fr; gap:18px }
+@media(max-width:900px){ .layout{ grid-template-columns:1fr } }
+
+/* panels */
+.panel{ padding:16px;border-radius:12px;background:var(--card) }
+#todoList{ list-style:none;padding:0;margin:16px 0 0 0; display:grid; gap:10px }
+
+/* each todo row */
+.todo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border-radius:12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: 0.12s;
+  max-width:100%;
+}
+.todo:hover{ transform: translateY(-2px); background: rgba(255,255,255,0.035) }
+.todo.completed .title{ text-decoration: line-through; color: var(--muted) }
+
+/* checkbox */
+.todo input[type="checkbox"]{ width:18px; height:18px; margin:0 }
+
+/* main content */
+.main {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* title */
+.title{
+  font-weight:700;
+  font-size:15px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color:inherit;
+}
+
+/* description preview */
+.desc{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.3;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  word-break: break-word;
+}
+
+/* meta row */
+.meta{ display:flex; gap:8px; align-items:center; font-size:12px; color:var(--muted) }
+.chip{ padding:4px 8px; border-radius:999px; font-weight:700; font-size:11px; display:inline-block }
+.p-urgent{ background: #ff6b6b22; color: #ff6b6b }
+.p-normal{ background: #ffd16622; color: #ffd166 }
+.p-optional{ background: #6df7c122; color: #6df7c1 }
+.due{ background: rgba(255,255,255,0.06); padding:2px 6px; border-radius:6px; font-weight:600; color:var(--muted); font-size:12px }
+
+/* actions */
+.actions{ display:flex; gap:8px; align-items:center; flex-shrink:0 }
+.icon-btn{ background:transparent;border:none;color:var(--muted);font-size:16px;padding:6px;border-radius:6px;cursor:pointer; transition:0.12s }
+.icon-btn:hover{ transform: scale(1.18); color:#fff }
+.icon-btn.delete{ color: var(--danger) }
+
+/* sidebar */
+.sidebar{ display:flex; flex-direction:column; gap:14px }
+.card{ background:var(--card); padding:14px; border-radius:12px }
+
+/* filters */
+.filter-btn{
+  background:rgba(255,255,255,0.03); border:none; padding:8px 12px; border-radius:8px; color:var(--muted); font-weight:600; cursor:pointer;
+}
+.filter-btn.active{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#021; font-weight:800 }
+
+/* progress */
+.progress{ height:12px; background:rgba(255,255,255,0.06); border-radius:999px; overflow:hidden }
+.progress span{ display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)) }
+
+/* modal */
+.modal-backdrop{
+  position:fixed; inset:0; display:none; place-items:center; background: rgba(0,0,0,0.6); z-index:1200;
+}
+.modal-backdrop.show{ display:grid }
+.modal{
+  width: min(560px, 94%);
+  background: rgba(22,25,33,0.98);
+  padding:18px;
+  border-radius:12px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.6);
+  color:#fff;
+}
+.modal h2{ margin:0 0 12px 0 }
+
+/* ✅ Fix 1: keep read modal centered with scrollable content */
+#readBackdrop .modal{
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* ✅ Fix 2: long text scrolls vertically only */
+#readDesc{
+  color:var(--muted);
+  white-space:pre-wrap;
+  margin-top:10px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.field{ display:flex; flex-direction:column; gap:8px; margin-bottom:12px }
+.input,textarea,select{
+  padding:10px;border-radius:10px;border:0;background:rgba(255,255,255,0.06);color:#fff;font-size:14px;outline:none;
+}
+textarea{ min-height:90px; resize:vertical }
+.btnRow{ display:flex; justify-content:flex-end; gap:10px }
+
+/* small buttons */
+#modalCancel,#confirmCancel,#trashClose,#readClose{
+  background: rgba(255,255,255,0.06); color:#fff; border:0; padding:8px 12px; border-radius:8px; font-weight:600; cursor:pointer;
+}
+#modalCancel:hover,#confirmCancel:hover,#trashClose:hover,#readClose:hover{ background: rgba(255,255,255,0.12) }
+
+.emptyMsg{ text-align:center; color:var(--muted); padding:18px 10px }
+select,select option{ background:#1a1f2e; color:#fff }
+
+@media(max-width:520px){
+  .title{ font-size:14px }
+  .desc{ -webkit-line-clamp:1 }
+  .modal{ width:94% }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div style="display:flex;align-items:center;gap:10px">
+      <img src="Media/logo.png" alt="Logo" style="width:36px;height:36px;border-radius:8px;object-fit:cover">
+      <h1>FlowList</h1>
+    </div>
+    <button id="newBtn" class="btn">＋ New Task</button>
+  </header>
+
+  <div class="layout">
+    <section class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><strong>Tasks</strong></div>
+        <div id="counts" style="font-size:13px;color:var(--muted)"></div>
+      </div>
+      <ul id="todoList" aria-live="polite"></ul>
+    </section>
+
+    <aside class="sidebar">
+      <div class="card">
+        <strong>Filter Tasks</strong>
+        <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="pending">Pending</button>
+          <button class="filter-btn" data-filter="completed">Completed</button>
+          <button class="filter-btn" data-filter="overdue">Overdue</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <strong>Progress</strong>
+        <div style="margin-top:8px" class="progress"><span id="progressFill" style="width:0%"></span></div>
+      </div>
+
+      <div class="card">
+        <button id="clearCompleted" class="filter-btn" style="width:100%;text-align:center">Clear Completed</button>
+      </div>
+
+      <div class="card">
+        <button id="openTrash" class="filter-btn" style="width:100%;text-align:center">View Trash</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- New/Edit modal -->
+<div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">New Task</h2>
+
+    <div class="field">
+      <input id="modalTitleInput" class="input" placeholder="Title (short)" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <textarea id="modalDescInput" placeholder="Description (optional - long text ok)"></textarea>
+    </div>
+
+    <div class="field" style="flex-direction:row;gap:8px;align-items:center">
+      <select id="modalPriority">
+        <option value="urgent">Urgent</option>
+        <option value="normal" selected>Normal</option>
+        <option value="optional">Optional</option>
+      </select>
+      <input id="modalDue" type="date" class="input" style="flex:1">
+    </div>
+
+    <div class="btnRow">
+      <button id="modalCancel">Cancel</button>
+      <button id="modalSave" class="btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm delete modal -->
+<div id="confirmBackdrop" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="dialog">
+    <h2>Confirm Delete</h2>
+    <p>Delete this task? It will be moved to Trash (you can restore or permanently delete it there).</p>
+    <div class="btnRow">
+      <button id="confirmCancel">Cancel</button>
+      <button id="confirmDelete" class="btn" style="background:var(--danger);color:white">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Trash modal -->
+<div id="trashBackdrop" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h2>Trash — Recently Deleted</h2>
+    <ul id="trashList" style="list-style:none;padding:0;margin-top:12px"></ul>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px">
+      <button id="emptyTrash" style="background:rgba(255,0,0,0.08);color:#fff;border:0;padding:8px 12px;border-radius:8px">Empty Trash</button>
+      <button id="trashClose">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Empty Trash confirm modal -->
+<div id="emptyConfirmBackdrop" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h2>Empty Trash</h2>
+    <p>Empty trash permanently? This action cannot be undone.</p>
+    <div class="btnRow">
+      <button id="emptyConfirmCancel">Cancel</button>
+      <button id="emptyConfirmOk" class="btn" style="background:var(--danger);color:white">Empty</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Read-only modal -->
+<div id="readBackdrop" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h2 id="readTitle"></h2>
+    <div id="readDesc" style="color:var(--muted);white-space:pre-wrap;margin-top:10px"></div>
+    <div class="btnRow" style="margin-top:12px">
+      <button id="readClose">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const qs = s => document.querySelector(s);
+  const qsa = s => [...document.querySelectorAll(s)];
+  const uid = () => 't_' + Math.random().toString(36).slice(2,9);
+
+  // state
+  let todos = JSON.parse(localStorage.getItem('flowlist.todos') || '[]');
+  let trash = JSON.parse(localStorage.getItem('flowlist.trash') || '[]');
+
+  let editId = null;
+  let deleteTarget = null;
+  let activeFilter = 'all';
+
+  // elements
+  const todoList = qs('#todoList');
+  const counts = qs('#counts');
+  const progressFill = qs('#progressFill');
+
+  const modalBackdrop = qs('#modalBackdrop');
+  const modalTitle = qs('#modalTitle');
+  const modalTitleInput = qs('#modalTitleInput');
+  const modalDescInput = qs('#modalDescInput');
+  const modalPriority = qs('#modalPriority');
+  const modalDue = qs('#modalDue');
+  const modalSave = qs('#modalSave');
+  const modalCancel = qs('#modalCancel');
+
+  const confirmBackdrop = qs('#confirmBackdrop');
+  const confirmDelete = qs('#confirmDelete');
+  const confirmCancel = qs('#confirmCancel');
+
+  const trashBackdrop = qs('#trashBackdrop');
+  const trashList = qs('#trashList');
+  const trashClose = qs('#trashClose');
+  const openTrashBtn = qs('#openTrash');
+  const emptyTrashBtn = qs('#emptyTrash');
+
+  const readBackdrop = qs('#readBackdrop');
+  const readTitle = qs('#readTitle');
+  const readDesc = qs('#readDesc');
+  const readClose = qs('#readClose');
+
+  // persist
+  function save(){
+    localStorage.setItem('flowlist.todos', JSON.stringify(todos));
+    localStorage.setItem('flowlist.trash', JSON.stringify(trash));
+  }
+
+  // modal helpers
+  function openModal(edit=false, id=null){
+    modalBackdrop.classList.add('show');
+    modalBackdrop.setAttribute('aria-hidden','false');
+    if(edit){
+      modalTitle.textContent = 'Edit Task';
+      editId = id;
+      const t = todos.find(x=>x.id===id);
+      if(t){
+        modalTitleInput.value = t.title || '';
+        modalDescInput.value = t.description || '';
+        modalPriority.value = t.priority || 'normal';
+        modalDue.value = t.due || '';
+      }
+    } else {
+      modalTitle.textContent = 'New Task';
+      editId = null;
+      modalTitleInput.value = '';
+      modalDescInput.value = '';
+      modalPriority.value = 'normal';
+      modalDue.value = '';
+    }
+    setTimeout(()=> modalTitleInput.focus(), 80);
+  }
+  function closeModal(){
+    modalBackdrop.classList.remove('show');
+    modalBackdrop.setAttribute('aria-hidden','true');
+    editId = null;
+  }
+
+  function openConfirm(id){
+    deleteTarget = id;
+    confirmBackdrop.classList.add('show');
+    confirmBackdrop.setAttribute('aria-hidden','false');
+  }
+  function closeConfirm(){
+    deleteTarget = null;
+    confirmBackdrop.classList.remove('show');
+    confirmBackdrop.setAttribute('aria-hidden','true');
+  }
+
+  function openTrash(){
+    renderTrash();
+    trashBackdrop.classList.add('show');
+    trashBackdrop.setAttribute('aria-hidden','false');
+  }
+  function closeTrash(){
+    trashBackdrop.classList.remove('show');
+    trashBackdrop.setAttribute('aria-hidden','true');
+  }
+
+  function openRead(t){
+    readTitle.textContent = t.title || '(no title)';
+    readDesc.textContent = t.description || '(no description)';
+    readBackdrop.classList.add('show');
+    readBackdrop.setAttribute('aria-hidden','false');
+  }
+  function closeRead(){ readBackdrop.classList.remove('show'); readBackdrop.setAttribute('aria-hidden','true') }
+
+  // render functions
+  function render(){
+    // filter
+    let list = todos.slice();
+    if(activeFilter === 'pending') list = list.filter(t=>!t.done);
+    if(activeFilter === 'completed') list = list.filter(t=>t.done);
+    if(activeFilter === 'overdue') list = list.filter(t=>!t.done && t.due && new Date(t.due) < new Date());
+
+    todoList.innerHTML = '';
+    if(list.length === 0){
+      todoList.innerHTML = `<div class="emptyMsg">No tasks yet — create your first task! 🎉</div>`;
+    }
+
+    list.forEach(t => {
+      const li = document.createElement('li');
+      li.className = 'todo' + (t.done ? ' completed' : '');
+
+      // checkbox
+      const chk = document.createElement('input');
+      chk.type = 'checkbox';
+      chk.checked = !!t.done;
+      chk.addEventListener('change', () => {
+        t.done = chk.checked;
+        save();
+        render();
+      });
+
+      // main content
+      const main = document.createElement('div');
+      main.className = 'main';
+
+      const title = document.createElement('div');
+      title.className = 'title';
+      title.textContent = t.title || '(no title)';
+
+      main.appendChild(title);
+
+      if(t.description){
+        const desc = document.createElement('div');
+        desc.className = 'desc';
+        desc.textContent = t.description;
+        main.appendChild(desc);
+      }
+
+      // meta row
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const chip = document.createElement('span');
+      chip.className = 'chip p-' + (t.priority || 'normal');
+      chip.textContent = {urgent:'Urgent', normal:'Normal', optional:'Optional'}[t.priority || 'normal'];
+      meta.appendChild(chip);
+      if(t.due){
+        const dspan = document.createElement('span');
+        dspan.className = 'due';
+        dspan.textContent = t.due;
+        meta.appendChild(dspan);
+      }
+      main.appendChild(meta);
+
+      // actions (always visible)
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+
+      const readBtn = document.createElement('button');
+      readBtn.className = 'icon-btn';
+      readBtn.title = 'Read';
+      readBtn.textContent = '👁';
+      readBtn.addEventListener('click', (e) => { e.stopPropagation(); openRead(t); });
+
+      const editBtn = document.createElement('button');
+      editBtn.className = 'icon-btn';
+      editBtn.title = 'Edit';
+      editBtn.textContent = '✎';
+      editBtn.addEventListener('click', (e) => { e.stopPropagation(); openModal(true, t.id); });
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'icon-btn delete';
+      delBtn.title = 'Delete';
+      delBtn.textContent = '🗑';
+      delBtn.addEventListener('click', (e) => { e.stopPropagation(); openConfirm(t.id); });
+
+      actions.append(readBtn, editBtn, delBtn);
+
+      // assemble row: checkbox, main (flexible), actions (fixed)
+      li.appendChild(chk);
+      li.appendChild(main);
+      li.appendChild(actions);
+
+      todoList.appendChild(li);
+    });
+
+    // counts and progress
+    const total = todos.length;
+    const done = todos.filter(x=>x.done).length;
+    counts.textContent = `${done}/${total} done`;
+    progressFill.style.width = total ? ((done/total)*100)+'%' : '0%';
+
+    save();
+  }
+
+  function renderTrash(){
+    trashList.innerHTML = '';
+    if(!trash.length){
+      trashList.innerHTML = `<div class="emptyMsg">Trash is empty</div>`;
+      return;
+    }
+
+    trash.forEach((t, i) => {
+      const li = document.createElement('li');
+      li.className = 'todo';
+
+      const main = document.createElement('div');
+      main.className = 'main';
+      const title = document.createElement('div');
+      title.className = 'title';
+      title.textContent = t.title || '(no title)';
+      main.appendChild(title);
+
+      if(t.description){
+        const desc = document.createElement('div');
+        desc.className = 'desc';
+        desc.textContent = t.description;
+        main.appendChild(desc);
+      }
+
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+      const restore = document.createElement('button');
+      restore.className = 'icon-btn';
+      restore.textContent = '↩';
+      restore.title = 'Restore';
+      restore.addEventListener('click', () => {
+        todos.push(t);
+        trash.splice(i,1);
+        save();
+        render();
+        renderTrash();
+      });
+
+      const perm = document.createElement('button');
+      perm.className = 'icon-btn delete';
+      perm.textContent = '❌';
+      perm.title = 'Delete permanently';
+      perm.addEventListener('click', () => {
+        trash.splice(i,1);
+        save();
+        renderTrash();
+      });
+
+      actions.append(restore, perm);
+      li.appendChild(main);
+      li.appendChild(actions);
+      trashList.appendChild(li);
+    });
+  }
+
+  function escapeHtml(s){ return (s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;') }
+
+  // events
+  qs('#newBtn').addEventListener('click', ()=> openModal(false,null));
+  modalCancel.addEventListener('click', ()=> closeModal());
+  modalSave.addEventListener('click', () => {
+    const title = modalTitleInput.value.trim();
+    const desc = modalDescInput.value.trim();
+    if(!title){
+      modalTitleInput.style.boxShadow = '0 0 0 3px rgba(255,80,80,0.2)';
+      setTimeout(()=> modalTitleInput.style.boxShadow='',700);
+      modalTitleInput.focus();
+      return;
+    }
+    if(editId){
+      const t = todos.find(x=>x.id===editId);
+      if(t){
+        t.title = title;
+        t.description = desc;
+        t.priority = modalPriority.value;
+        t.due = modalDue.value || null;
+      }
+    } else {
+      todos.push({ id: uid(), title, description: desc, priority: modalPriority.value, due: modalDue.value || null, done: false });
+    }
+    save();
+    closeModal();
+    render();
+  });
+
+  confirmCancel.addEventListener('click', closeConfirm);
+  confirmDelete.addEventListener('click', () => {
+    if(deleteTarget){
+      const t = todos.find(x=>x.id===deleteTarget);
+      if(t){
+        trash.push({...t, deletedAt: new Date().toISOString()});
+        todos = todos.filter(x=>x.id !== deleteTarget);
+      }
+    }
+    save();
+    closeConfirm();
+    render();
+  });
+
+  qs('#clearCompleted').addEventListener('click', () => {
+    todos = todos.filter(t=>!t.done);
+    save();
+    render();
+  });
+
+  openTrashBtn.addEventListener('click', openTrash);
+  trashClose.addEventListener('click', closeTrash);
+ // Empty Trash confirm modal logic
+const emptyConfirmBackdrop = qs('#emptyConfirmBackdrop');
+const emptyConfirmCancel = qs('#emptyConfirmCancel');
+const emptyConfirmOk = qs('#emptyConfirmOk');
+
+emptyTrashBtn.addEventListener('click', () => {
+  emptyConfirmBackdrop.classList.add('show');
+  emptyConfirmBackdrop.setAttribute('aria-hidden','false');
+});
+
+emptyConfirmCancel.addEventListener('click', () => {
+  emptyConfirmBackdrop.classList.remove('show');
+  emptyConfirmBackdrop.setAttribute('aria-hidden','true');
+});
+
+emptyConfirmOk.addEventListener('click', () => {
+  trash = [];
+  save();
+  renderTrash();
+  emptyConfirmBackdrop.classList.remove('show');
+  emptyConfirmBackdrop.setAttribute('aria-hidden','true');
+});
+
+
+  readClose.addEventListener('click', closeRead);
+
+  // filter buttons
+  qsa('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter;
+      if(!f) return;
+      qsa('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = f;
+      render();
+    });
+  });
+
+  // backdrop click to close modals (including Empty Trash confirm)
+[modalBackdrop, confirmBackdrop, trashBackdrop, readBackdrop, emptyConfirmBackdrop].forEach(back => {
+  back.addEventListener('click', (e) => { 
+    if(e.target === back) back.classList.remove('show'); 
+  });
+});
+
+
+  // keyboard support
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){
+      closeModal(); closeConfirm(); closeTrash(); closeRead();
+    }
+    if(e.key === 'Enter' && modalBackdrop.classList.contains('show')){
+      modalSave.click();
+    }
+  });
+
+  // initial render
+  render();
+})();
+</script>
+</body>
+</html>
