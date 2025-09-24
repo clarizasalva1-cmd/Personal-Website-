@@ -588,16 +588,58 @@
     }
   });
 
-  // Calculator
-  function appendValue(val) { document.getElementById('result').value += val; }
-  function clearResult() { document.getElementById('result').value = ''; }
+    // === Calculator ===
+  function appendValue(val) {
+    document.getElementById('result').value += val;
+  }
+
+  function clearResult() {
+    document.getElementById('result').value = '';
+  }
+
+  // function to handle + - * /
+  function calculate(num1, num2, operator) {
+    const a = Number(num1); // const = won’t change
+    const b = Number(num2); // const = won’t change
+    let result;             // let = changes depending on operator
+
+    if (operator === '+') {
+      result = a + b;
+    } else if (operator === '-') {
+      result = a - b;
+    } else if (operator === '*') {
+      result = a * b;
+    } else if (operator === '/') {
+      result = b !== 0 ? a / b : "Error: Divide by zero";
+    } else {
+      result = "Invalid operator";
+    }
+
+    return result;
+  }
+
   function calculateResult() {
     try {
-      document.getElementById('result').value = eval(document.getElementById('result').value);
+      const input = document.getElementById('result').value.trim();
+
+      // Match: number operator number (e.g. "5+3")
+      const match = input.match(/^(-?\d+(\.\d+)?)([+\-*/])(-?\d+(\.\d+)?)$/);
+
+      if (match) {
+        const num1 = match[1];
+        const operator = match[3];
+        const num2 = match[4];
+
+        const output = calculate(num1, num2, operator);
+        document.getElementById('result').value = output;
+      } else {
+        showModal("Error", "Invalid input. Please enter in the form: number operator number (e.g., 5+3)");
+      }
     } catch {
-      showModal("Error", "Invalid expression entered.");
+      showModal("Error", "Something went wrong.");
     }
   }
+
 
   // Logout
   function logout() {
