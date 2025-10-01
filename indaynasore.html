@@ -1,0 +1,1423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Inday-na-sore — Personalized Endless Runner</title>
+<style>
+:root {
+  --teal:#0a4c5a; 
+  --teal2:#2a9d8f; 
+  --accent:#e76f51;
+  --light:#eaf6f5; 
+  --ground:#3a6b6a; 
+  --muted:#f6f6f6;
+}
+
+html, body {
+  height:100%;
+  margin:0;
+  font-family:Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+body {
+  background:linear-gradient(160deg,var(--teal),var(--teal2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  color:var(--muted);
+}
+
+.wrap {
+  width:100%;
+  max-width:980px;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 18px 50px rgba(0,0,0,0.35);
+  background:rgba(255,255,255,0.02);
+}
+
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 16px;
+  background:rgba(255,255,255,0.02);
+}
+
+.brand {
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+.logo {
+  width:44px;
+  height:44px;
+  border-radius:10px;
+  background:var(--accent);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+}
+
+h1 { margin:0; font-size:18px }
+
+.controls { display:flex; gap:8px; align-items:center }
+
+.btn {
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--muted);
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.game-area { position:relative; padding:16px }
+
+canvas {
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:8px;
+  background:linear-gradient(180deg,#eaf6f5 0%, #cfe9e6 70%);
+}
+
+.hud {
+  position:absolute;
+  right:18px;
+  top:18px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  z-index:9;
+}
+
+.score-box {
+  background:rgba(0,0,0,0.05);
+  padding:8px 10px;
+  border-radius:8px;
+  font-weight:700;
+  color:#073;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+}
+
+.score-main { font-size:14px }
+.score-sub { font-size:11px; opacity:0.8 }
+
+.power-hud {
+  position:absolute;
+  left:18px;
+  top:18px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  z-index:9;
+}
+
+.power-slot {
+  background:rgba(255,255,255,0.03);
+  padding:6px 8px;
+  border-radius:8px;
+  color:var(--muted);
+  font-weight:700;
+  min-width:92px;
+}
+
+.power-timer {
+  height:8px;
+  background:rgba(0,0,0,0.12);
+  border-radius:6px;
+  margin-top:6px;
+  overflow:hidden;
+}
+
+.power-fill {
+  height:100%;
+  background:linear-gradient(90deg,var(--accent),#ffd27a);
+  width:0%;
+}
+
+.overlay {
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:12px;
+  background:linear-gradient(180deg,rgba(10,76,90,0.45),rgba(10,76,90,0.6));
+  z-index:10;
+  color:white;
+  text-align:center;
+  padding:18px;
+  display:none;
+}
+
+.overlay h2 {
+  font-size: 28px;
+  margin: 0 0 12px 0;
+}
+
+.overlay p {
+  font-size: 15px;
+  max-width: 460px;
+  margin: 4px auto;
+  line-height: 1.5;
+}
+
+.overlay.show { display:flex }
+
+.small { font-size:13px; opacity:0.9 }
+
+footer {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 16px;
+  background:rgba(255,255,255,0.01);
+  font-size:13px;
+}
+
+.mobile-controls {
+  display:none;
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:12px;
+  z-index:12;
+}
+
+.jump-touch {
+  background:var(--accent);
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:40px;
+  font-weight:700;
+}
+
+.settings {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* proper spacing between input and button */
+}
+
+input[type="text"] {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--muted);
+  padding: 6px 8px;
+  border-radius: 6px;
+  width: 200px;       /* smaller width */
+  font-size: 13px;
+}
+
+.tip {
+  background:rgba(0,0,0,0.16);
+  padding:8px;
+  border-radius:8px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+/* ✅ Make placeholder text brighter and visible */
+input::placeholder {
+  color: #c3c1c1;
+  opacity: 1;
+  font-weight: 600;
+}
+
+/* ✅ Always-on text outline for power-up labels */
+.text-outline {
+  color: #fff;
+  text-shadow:
+     -1px -1px 0 #000,
+      1px -1px 0 #000,
+     -1px  1px 0 #000,
+      1px  1px 0 #000;
+}
+
+@media (max-width:720px) {
+  .mobile-controls { display:block }
+  canvas { height:220px }
+  .hud { right:8px; top:8px }
+}
+
+/* 📘 Modal styling */
+#howModal {
+  background: rgba(0,0,0,0.55);
+}
+
+#howModal .btn {
+  color: #333;              /* darker text */
+  border: 1px solid #ccc;   /* lighter border */
+  background: #f4f4f4;      /* subtle background */
+}
+
+#howModal .btn:hover {
+  background: #e0e0e0;
+}
+
+
+.modal-box {
+  background: white;
+  color: #000000;
+  padding: 22px;
+  border-radius: 12px;
+  max-width: 360px;
+  width: 90%;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+  text-align: left;
+}
+
+.modal-box h2 {
+  margin-top: 0;
+  font-size: 22px;
+  color: var(--accent);
+}
+
+.modal-box ul {
+  padding-left: 18px;
+  margin: 12px 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.modal-box button {
+  display: block;
+  margin: 10px auto 0;
+}
+
+</style>
+</head>
+<body>
+  <div class="wrap" role="main" aria-label="Inday na sore Game">
+    <header>
+      <div class="brand">
+        <div class="logo">IS</div>
+        <div>
+          <h1>Inday-na-sore Game</h1>
+          <div class="small">Space / ↑ = jump • ↓ = duck • P pause • R restart</div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="settings" title="Paste a direct image URL (your Facebook profile picture link or any image URL).">
+            <input id="avatarUrl" type="text" placeholder="Paste avatar image URL (optional)">
+            <button id="applyAvatar" class="btn">Apply</button>
+        </div>
+        <button id="btnMute" class="btn">🔊</button>
+        <button id="btnPause" class="btn">⏸ Pause</button>
+        <button id="btnRestart" class="btn">🔁 Restart</button>
+      </div>
+    </header>
+
+    <div class="game-area">
+      <canvas id="gameCanvas" width="920" height="260"></canvas>
+
+      <div class="hud">
+        <div class="score-box">
+         <div class="score-main text-outline">SCORE: <span id="score">0</span></div>
+         <div class="score-sub text-outline">BEST: <span id="best">0</span></div>
+        </div>
+      </div>
+
+      <div class="power-hud">
+        <div class="power-slot" id="pShield">
+          <span class="text-outline">Shield</span>
+          <div class="power-timer"><div id="pShieldFill" class="power-fill"></div></div>
+          <div class="small text-outline" id="pShieldSec"></div>
+        </div>
+
+        <div class="power-slot" id="pMagnet">
+          <span class="text-outline">Magnet</span>
+          <div class="power-timer"><div id="pMagnetFill" class="power-fill"></div></div>
+          <div class="small text-outline" id="pMagnetSec"></div>
+        </div>
+
+        <div class="power-slot" id="pKatana">
+          <span class="text-outline">Claw</span>
+          <div class="power-timer"><div id="pKatanaFill" class="power-fill"></div></div>
+          <div class="small text-outline" id="pKatanaSec"></div>
+        </div>
+
+        <div class="power-slot" id="pDouble">
+          <span class="text-outline">Double</span>
+          <div class="power-timer"><div id="pDoubleFill" class="power-fill"></div></div>
+          <div class="small text-outline" id="pDoubleSec"></div>
+        </div>
+      </div>
+
+      <!-- ✅ Fixed overlay -->
+      <div class="overlay" id="overlayStart">
+        <h2>Inday-na-sore</h2>
+        <p>Use your own profile picture as Inday’s face.</p>
+        <div style="display:flex; gap:12px; margin-top:20px; justify-content:center;">
+          <button id="startBtn" class="btn">Start</button>
+          <button id="howBtn" class="btn">How to play</button>
+        </div>
+      </div>
+
+      <!-- 📘 How to Play Modal -->
+    <div class="overlay" id="howModal">
+    <div class="modal-box">
+        <h2>How to Play</h2>
+        <ul>
+        <li><b>Space / ↑</b> = Jump (double jump enabled)</li>
+        <li><b>↓</b> = Duck / Crouch</li>
+        <li>Collect powers and coins</li>
+        <li>Jump through notes to play melody 🎵</li>
+        </ul>
+        <button id="closeHow" class="btn">Close</button>
+    </div>
+    </div>
+
+
+      <div class="overlay" id="overlayGameOver">
+        <h2>Game Over</h2>
+        <p id="finalScore">Score: 0</p>
+        <div style="display:flex;gap:8px">
+          <button id="again" class="btn">Play Again</button>
+          <button id="shareScore" class="btn">Share</button>
+        </div>
+      </div>
+
+      <div class="mobile-controls">
+        <button class="jump-touch" id="touchJump">JUMP</button>
+      </div>
+
+      <div style="position:absolute;right:18px;bottom:18px;z-index:9">
+        <div class="tip" id="liveTip">Tip: Jump over notes to play melody 🎵</div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="small">Seasons: summer / autumn / winter / spring cycle. Power timers are shown above.</div>
+      <div class="small">Controls: Space / ↑ = jump • ↓ = duck</div>
+    </footer>
+  </div>
+<script>
+/* Inday-na-sore personalized
+   - paste avatar URL in input and press Apply
+   - face is clipped to ninja head; smile/sad animations implemented
+   - powers: shield, magnet, claw, double points (timed)
+   - katana usage: press K to slash while katana active
+   - obstacles are musical notes; jumping over them plays tones
+   - four seasons cycle visually
+   - high score shown in HUD (BEST)
+   - endless mode; speed increases with score
+   - mobile touch controls included
+*/
+
+(() => {
+  // Canvas & ctx
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+// UI refs
+const scoreEl = document.getElementById('score');
+const bestEl = document.getElementById('best');
+const overlayStart = document.getElementById('overlayStart');
+const overlayGameOver = document.getElementById('overlayGameOver');
+const startBtn = document.getElementById('startBtn');
+const howBtn = document.getElementById('howBtn');
+const againBtn = document.getElementById('again');
+const shareBtn = document.getElementById('shareScore');
+const btnPause = document.getElementById('btnPause');
+const btnRestart = document.getElementById('btnRestart');
+const btnMute = document.getElementById('btnMute');
+const touchJump = document.getElementById('touchJump');
+const avatarInput = document.getElementById('avatarUrl');
+const applyAvatarBtn = document.getElementById('applyAvatar');
+const liveTip = document.getElementById('liveTip');
+
+// 📘 How-to modal refs & events
+const howModal = document.getElementById('howModal');
+const closeHow = document.getElementById('closeHow');
+
+howBtn.addEventListener('click', () => {
+  howModal.classList.add('show');
+});
+
+closeHow.addEventListener('click', () => {
+  howModal.classList.remove('show');
+});
+
+
+  // Power UI fills
+  const pShieldFill = document.getElementById('pShieldFill'), pShieldSec = document.getElementById('pShieldSec');
+  const pMagnetFill = document.getElementById('pMagnetFill'), pMagnetSec = document.getElementById('pMagnetSec');
+  const pKatanaFill = document.getElementById('pKatanaFill'), pKatanaSec = document.getElementById('pKatanaSec');
+  const pDoubleFill = document.getElementById('pDoubleFill'), pDoubleSec = document.getElementById('pDoubleSec');
+
+  // WebAudio setup
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  const audioCtx = AudioCtx ? new AudioCtx() : null;
+  let muted = false;
+  btnMute.addEventListener('click', () => { muted = !muted; updateMuteBtn(); if (!muted && audioCtx && audioCtx.state==='suspended') audioCtx.resume(); });
+  function updateMuteBtn(){ btnMute.textContent = muted ? '🔇' : '🔊'; }
+  updateMuteBtn();
+
+  function tone(freq, t=0.08, type='sine', vol=0.06){
+    if (!audioCtx || muted) return;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.value = vol;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    o.stop(audioCtx.currentTime + t);
+  }
+
+  // Game state
+  let running = false, paused = false;
+let score = 0;
+let best = parseInt(localStorage.getItem('inday_best') || '0', 10);
+bestEl.textContent = best;
+let frame = 0;
+let rafId = null; // <--- track animation frame
+
+
+  // World config
+  const groundY = H - 44;
+  let speed = 5;            // increases with score
+  let spawnTimer = 0;
+  let spawnInterval = 90;
+
+// Player object with target dimensions
+const player = {
+  x: 84, y: groundY, w: 26, h: 32, 
+  targetW: 26, targetH: 32,   // ✅ added target sizes
+  vy: 0, gravity: 0.9, jumpForce: -15,
+  jumps: 0, maxJumps: 2,
+  sliding: false,
+  smileTimer: 0, sadTimer: 0
+};
+
+
+  // Avatar image (face)
+  let avatarImg = null;
+  const defaultAvatar = null; // if null, draw generic face
+
+  // Powers (timed)
+  const POWER_SEC = 10; // seconds
+  let powers = { shield:0, magnet:0, katana:0, double:0 }; // frames remaining
+  const POWER_FRAMES = POWER_SEC * 60;
+
+  // Entities
+  let obstacles = []; // objects {x,y,w,h,type,note}
+  let coins = [];     // objects {x,y,r,isPower,powerType}
+  let particles = [];
+  let clouds = [];
+
+  // Seasons: 0-summer,1-autumn,2-winter,3-spring
+  let season = 0;
+  const seasonDurationFrames = 60 * 12; // ~12 seconds each (tweak as you like)
+  let seasonTimer = 0;
+
+  // Melody notes map (C major-ish)
+  const NOTES = { C4:261.6, D4:293.7, E4:329.6, G4:392, A4:440, B4:493.9, C5:523.3 };
+
+  // Input
+  const keys = {};
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); jump(); }
+    if (e.code === 'ArrowDown') { e.preventDefault(); slideStart(); }
+    if (e.code === 'KeyP') togglePause();
+    if (e.code === 'KeyR') restart();
+    if (e.code === 'KeyK') slashKatana();
+    keys[e.code] = true;
+  });
+  window.addEventListener('keyup', (e) => {
+    keys[e.code] = false;
+    if (e.code === 'ArrowDown') slideEnd();
+  });
+
+  // Touch/click
+  canvas.addEventListener('click', (e) => { if (!running) start(); else jump(); });
+  touchJump.addEventListener('click', ()=> { if (!running) start(); else jump(); });
+
+  // UI events
+  startBtn.addEventListener('click', start);
+  howBtn.addEventListener('click', () => {
+  howModal.classList.add('show');
+});
+
+  againBtn.addEventListener('click', restart);
+  shareBtn.addEventListener('click', shareScore);
+  btnPause.addEventListener('click', togglePause);
+  btnRestart.addEventListener('click', restart);
+  applyAvatarBtn.addEventListener('click', applyAvatarFromInput);
+
+  // apply avatar from input field (user pastes URL)
+  function applyAvatarFromInput(){
+    const url = avatarInput.value.trim();
+    if (!url) { avatarImg = null; showTip('Avatar cleared, using default face'); return; }
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => { avatarImg = img; showTip('Avatar applied'); };
+    img.onerror = () => { avatarImg = null; showTip('Failed to load image — check URL'); };
+    img.src = url;
+  }
+
+  // Show temporary tip
+  function showTip(text, duration=2200){
+    liveTip.textContent = text;
+    liveTip.style.opacity = 1;
+    clearTimeout(liveTip._to);
+    liveTip._to = setTimeout(()=> { liveTip.style.opacity = 0.92; liveTip.textContent = 'Tip: Jump over notes to play melody 🎵'; }, duration);
+  }
+
+  // Gameplay actions
+  function start(){
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    running = true; paused = false;
+    overlayStart.classList.remove('show');
+    overlayGameOver.classList.remove('show');
+    resetWorld();
+    last = performance.now();
+    rafId = requestAnimationFrame(loop);
+  }
+
+ function restart(){
+  // Cancel old loop if still queued
+  if (rafId) cancelAnimationFrame(rafId);
+
+  running = false;
+  paused = false;
+
+  resetWorld();
+
+  overlayStart.classList.remove('show');
+  overlayGameOver.classList.remove('show');
+
+  running = true;
+  last = performance.now();
+  rafId = requestAnimationFrame(loop); // store new loop
+}
+ function togglePause(){
+  if (!running) return;
+
+  paused = !paused;
+  btnPause.textContent = paused ? '▶ Resume' : '⏸ Pause';
+
+  if (!paused){
+    // Resume: cancel any pending loop and restart fresh
+    if (rafId) cancelAnimationFrame(rafId);
+    last = performance.now();
+    rafId = requestAnimationFrame(loop);
+  }
+}
+
+
+  function jump(){
+    if (player.sliding) slideEnd();
+    if (player.jumps < player.maxJumps) {
+      player.vy = player.jumpForce * (player.jumps === 0 ? 1 : 0.88);
+      player.jumps++;
+      tone(NOTES.C5, 0.05, 'square', 0.06);
+      spawnParticles(player.x + player.w/2, player.y - player.h/2);
+    }
+  }
+  
+// Ducking functions (set target instead of instant resize)
+function slideStart(){
+  if (player.y >= groundY && !player.sliding) {
+    player.sliding = true;
+    player.targetH = 22;
+    player.targetW = 30;
+  }
+}
+
+function slideEnd(){
+  if (player.sliding) {
+    player.sliding = false;
+    player.targetH = 32;
+    player.targetW = 26;
+  }
+}
+
+  function autoClaw(){
+  if (powers.katana <= 0) return;
+
+  // Remove obstacles in front
+  for (let i = obstacles.length-1; i >= 0; i--){
+    if (obstacles[i].x > player.x && obstacles[i].x < player.x + 240) {
+      obstacles.splice(i,1);
+    }
+  }
+
+  // Draw 3 red claw marks on screen
+  ctx.save();
+  ctx.strokeStyle = "rgba(220,0,0,0.8)";
+  ctx.lineWidth = 6;
+  for (let j = 0; j < 3; j++) {
+    ctx.beginPath();
+    ctx.moveTo(W/2 - 80 + j*40, 40);
+    ctx.lineTo(W/2 - 40 + j*40, H - 40);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Play slash sound
+  tone(NOTES.E4, 0.08, 'triangle', 0.09);
+}
+
+
+  // Spawn functions
+ function spawnObstacle(){
+  if (Math.random() < 0.72) {
+    // 🎵 Ground notes only (no floating glitches)
+    const h = 22 + Math.round(Math.random()*20);
+    const w = 16 + Math.round(Math.random()*20);
+    const note = randomNote();
+    obstacles.push({
+      x: W + 20,
+     y: groundY - h - 2,   // snug to terrain
+      w, h,
+      type:'note',
+      pitch:note,
+      lane:'ground'
+    });
+  } else {
+    // 🐦 Bird flies just above head height, so crouch is required
+const birdH = 24 + Math.round(Math.random()*10);
+const birdW = 36 + Math.round(Math.random()*10);
+
+    // position ~1 head above dino, low enough to hit if standing
+    const birdTop = groundY - player.h - 14;  
+
+    obstacles.push({
+      x: W + 20,
+      y: birdTop,
+      w: birdW,
+      h: birdH,
+      type: 'bird',
+      lane: 'air',
+      bob: 0.6 + Math.random()*0.6,
+      flapTick: Math.round(Math.random()*8)
+    });
+  }
+}
+
+
+  function spawnCoin(x,y, isPower, powerType){
+    coins.push({ x: x || W + 30, y: y || (groundY - 110 - Math.random()*60), r: isPower?12:8, isPower: !!isPower, powerType: powerType || null });
+  }
+  function spawnCloud(){
+    clouds.push({ x: W + 20 + Math.random()*200, y: 20 + Math.random()*40, w: 60+Math.random()*80, speed: 0.2 + Math.random()*0.4 });
+  }
+  function randomNote(){
+    const list = [NOTES.C4, NOTES.D4, NOTES.E4, NOTES.G4, NOTES.A4, NOTES.B4];
+    return list[Math.floor(Math.random()*list.length)];
+  }
+
+  // Particles
+  function spawnParticles(x,y){
+    for (let i=0;i<6;i++) particles.push({ x, y, vx:(Math.random()-0.5)*4, vy:-Math.random()*3, life:30+Math.random()*20 });
+  }
+
+  // Power activation
+function activatePower(type){
+  powers[type] = POWER_FRAMES;
+  if (type === 'katana') showTip('Claw active! 🐾');
+  else if (type === 'magnet') showTip('Magnet pulls coins.');
+  else if (type === 'shield') showTip('You are invincible.');
+  else showTip('Double points!');
+  tone(NOTES.G4, 0.12, 'sine', 0.08);
+}
+
+
+  // Collision detection
+  function rectsOverlap(a,b){
+    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  }
+
+  // Reset game world
+function resetWorld(){
+  score = 0; frame = 0; speed = 5; spawnTimer = 0; spawnInterval = 90;
+  obstacles = []; coins = []; particles = []; clouds = [];
+  player.y = groundY; player.vy = 0; player.jumps = 0;
+  player.sliding = false; player.h = 32; player.w = 26;
+  player.sadTimer = 0; player.smileTimer = 0;
+  powers = { shield:0, magnet:0, katana:0, double:0 };
+  season = 0; seasonTimer = 0;
+  scoreEl.textContent = score;
+  bestEl.textContent = best;
+  for (let i=0;i<3;i++) spawnCloud();
+}
+  // Loop
+  let last = 0;
+  function loop(now){
+    if (!running) return;
+    if (paused) { 
+  last = now; 
+  return; // 🚫 no new requestAnimationFrame here
+}
+
+    const dt = Math.min(33, now - last); last = now;
+    frame++;
+
+    // Season timer
+    seasonTimer++;
+    if (seasonTimer > seasonDurationFrames){ seasonTimer = 0; season = (season + 1) % 4; }
+
+    // Spawn clouds occasionally
+    if (frame % 200 === 0) spawnCloud();
+
+    // Spawn obstacles over time
+    spawnTimer++;
+    if (spawnTimer > spawnInterval){
+      spawnTimer = 0;
+      spawnInterval = Math.max(46, Math.round(spawnInterval * (0.985 - Math.random()*0.005)));
+      spawnObstacle();
+      // sometimes spawn coin or power
+      if (Math.random() < 0.34) spawnCoin();
+      if (Math.random() < 0.07) {
+        const types = ['shield','magnet','katana','double'];
+        spawnCoin(W + 40, groundY - 120 - Math.random()*80, true, types[Math.floor(Math.random()*types.length)]);
+      }
+      speed += 0.08; // increase speed gradually
+    }
+
+    // Update player physics
+    player.vy += player.gravity * (powers.slow?0.55:1);
+    player.y += player.vy * (powers.slow?0.65:1);
+    if (player.y > groundY){ player.y = groundY; player.vy = 0; player.jumps = 0; }
+
+     // ✅ Smooth size animation each frame
+  player.w += (player.targetW - player.w) * 0.2;  
+  player.h += (player.targetH - player.h) * 0.2;
+
+    // Update obstacles
+    for (let i = obstacles.length - 1; i >= 0; i--){
+      const o = obstacles[i];
+      o.x -= speed * (powers.slow ? 0.6 : 1);
+      if (o.lane === 'air') o.y += Math.sin(frame * 0.06 + (o.bob||0)) * 0.8;
+      // For birds, advance flapTick so drawBird sees wing motion
+      if (o.type === 'bird') {
+        o.flapTick = (o.flapTick || 0) + 1;
+      }
+      // collision check
+      // ✅ Consistent bounding box
+        const pr = {
+        x: player.x,
+        y: player.y - player.h,
+        w: player.w,
+        h: player.h
+        };
+        const or = {
+        x: o.x,
+        y: o.y,
+        w: o.w,
+        h: o.h
+        };
+
+      if (rectsOverlap(pr, or)){
+        if (powers.shield > 0){ powers.shield = 0; tone(NOTES.G4,0.08,'sine',0.08); obstacles.splice(i,1); showTip('Shield absorbed obstacle'); continue; }
+        // if katana active and slashing not used, collision still ends unless slashed
+        // Game over
+        player.sadTimer = 60; // make face sad
+        tone(NOTES.C4, 0.24, 'sine', 0.12);
+        endGame();
+        return;
+      }
+      // if obstacle passes left of player (successfully avoided), smile briefly and play a note if player jumped through it
+      if (!o._passed && o.x + o.w < player.x){
+        o._passed = true;
+        // if player was airborne while crossing the obstacle X, count as "jump-through" => play pitch
+        if (player.y < groundY - 6){
+          tone(o.pitch || randomNote(), 0.12, 'triangle', 0.08);
+          player.smileTimer = 26;
+        } else {
+          // normal avoid, small smile
+          player.smileTimer = 12;
+        }
+        // award small score for passing obstacle
+        score += 6 + (powers.double?6:0);
+        updateScore();
+      }
+      if (o.x + o.w < -40) obstacles.splice(i,1);
+    }
+
+    // Update coins/powerups
+    for (let i = coins.length - 1; i >= 0; i--){
+      const c = coins[i];
+      // magnet effect
+      if (powers.magnet > 0){
+        const dx = (player.x + player.w/2) - c.x;
+        const dy = (player.y - player.h/2) - c.y;
+        c.x += dx * 0.08; c.y += dy * 0.04;
+      } else c.x -= speed * (powers.slow ? 0.6 : 1);
+      // check collect
+      const px = player.x + player.w/2, py = player.y - player.h/2;
+      const dist2 = (px - c.x)*(px - c.x) + (py - c.y)*(py - c.y);
+      if (dist2 < (20 + (c.r||8))*(20 + (c.r||8))) {
+        if (c.isPower && c.powerType){
+          activatePower(c.powerType);
+        } else {
+          score += 8 * (powers.double?2:1);
+          tone(NOTES.C5, 0.06, 'triangle', 0.06);
+          spawnParticles(c.x, c.y);
+        }
+        coins.splice(i,1);
+        updateScore();
+      } else if (c.x + (c.r||8) < -40) coins.splice(i,1);
+    }
+
+    // Update particles
+    for (let i = particles.length - 1; i >= 0; i--){
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.24;
+      p.life--; if (p.life <= 0) particles.splice(i,1);
+    }
+
+    // Update clouds
+    for (let i = clouds.length - 1; i >= 0; i--){
+      const c = clouds[i];
+      c.x -= c.speed;
+      if (c.x + c.w < -60) clouds.splice(i,1);
+    }
+
+    // reduce power frames
+    Object.keys(powers).forEach(k => { if (powers[k] > 0) powers[k]--; });
+
+    // score increases over time
+    if (frame % 6 === 0){ score += 1 * (powers.double?2:1); updateScore(); }
+
+    // Render
+    render();
+
+    // Auto Claw effect (draw claw marks + clear obstacles)
+    if (powers.katana > 0) autoClaw();
+
+    // request next frame
+   rafId = requestAnimationFrame(loop);
+  }
+
+function endGame(){
+  // Mark game over, but let sad face render
+  running = false;
+  player.sadTimer = 9999; // stay sad until reset
+
+  // Render one more frame so sad face is visible
+  render();
+
+  // Show overlay
+  overlayGameOver.classList.add('show');
+  document.getElementById('finalScore').textContent = 'Score: ' + score;
+
+  // Update best score
+  if (score > best){
+    best = score;
+    localStorage.setItem('inday_best', String(best));
+    bestEl.textContent = best;
+    showTip('New high score! 🎉');
+  }
+}
+
+
+  function updateScore(){ scoreEl.textContent = score; }
+
+  // Render function
+  function render(){
+    // clear
+    ctx.clearRect(0,0,W,H);
+
+    
+// --- Realistic Background & Terrain ---
+const seasonColors = {
+  summer: ['#87ceeb', '#f4fff4'], 
+  autumn: ['#f7d9a8', '#ffe9cc'],
+  winter: ['#eaf3ff', '#d6e6f7'],
+  spring: ['#c9f7cf', '#f0fff0']
+};
+const seasonNames = ['summer','autumn','winter','spring'];
+const sc = seasonColors[seasonNames[season]];
+
+// Sky gradient
+const g = ctx.createLinearGradient(0,0,0,H);
+g.addColorStop(0, sc[0]); 
+g.addColorStop(1, sc[1]);
+ctx.fillStyle = g; 
+ctx.fillRect(0,0,W,H);
+
+// Distant mountains (slow parallax, RIGHT ➝ LEFT)
+ctx.fillStyle = season === 2 ? "#c6d8f0" : "#6a8f3b"; 
+for (let i=0; i<3; i++){
+  ctx.beginPath();
+  const peakX = i*300 - (frame*0.2 % 300);
+  ctx.moveTo(peakX, groundY);
+  ctx.lineTo(peakX+150, groundY-80);
+  ctx.lineTo(peakX+300, groundY);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// Midground hills (medium parallax, RIGHT ➝ LEFT)
+ctx.fillStyle = season === 1 ? "#e58a3c" : (season === 2 ? "#9db9d4" : "#43a047");
+ctx.beginPath();
+ctx.moveTo(0, groundY);
+for (let x=0; x<=W; x+=40){
+  ctx.lineTo(x, groundY - 12 - Math.sin((x - frame*0.06)*0.12)*10);
+}
+ctx.lineTo(W, groundY);
+ctx.closePath();
+ctx.fill();
+
+// Clouds (already move left by update loop)
+ctx.fillStyle = 'rgba(255,255,255,0.9)';
+clouds.forEach(c => { drawCloud(c.x, c.y, c.w); });
+
+// Falling seasonal effects (move RIGHT ➝ LEFT)
+if (season === 1) { // autumn leaves
+  ctx.fillStyle = 'rgba(205,92,92,0.6)';
+  for (let i=0;i<6;i++){
+    ctx.beginPath();
+    ctx.ellipse((i*150 - frame*0.7 + W) % W, 40 + (i*20 + frame*0.5) % H, 6, 3, Math.PI/4, 0, Math.PI*2);
+    ctx.fill();
+  }
+} else if (season === 2) { // snow
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  for (let i=0;i<20;i++){
+    ctx.beginPath();
+    ctx.arc((i*50 - frame*0.8 + W) % W, (i*25 + frame*0.6) % H, 2, 0, Math.PI*2);
+    ctx.fill();
+  }
+} else if (season === 3) { // spring petals
+  ctx.fillStyle = 'rgba(255,182,193,0.7)';
+  for (let i=0;i<6;i++){
+    ctx.beginPath();
+    ctx.ellipse((i*120 - frame*0.9 + W) % W, (i*40 + frame*0.4) % H, 5, 2.5, Math.PI/3, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
+
+// Foreground ground (LIGHTER so dino is visible)
+ctx.fillStyle = season === 2 ? "#f2f2f2" : "#a5d6a7";
+ctx.fillRect(0, groundY, W, H-groundY);
+
+// Grass/ground texture lines (RIGHT ➝ LEFT)
+ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+for (let i=0;i<15;i++){
+  ctx.beginPath();
+  const offset = (frame*speed*0.2 % 70);
+  ctx.moveTo(i*70 - offset, groundY+4);
+  ctx.lineTo(i*70+40 - offset, groundY+4); 
+  ctx.stroke();
+}
+
+
+    // obstacles (notes & birds)
+    obstacles.forEach(o => {
+      if (o.type === 'bird') {
+        drawBird(o.x, o.y, o.w, o.h, o);
+      } else {
+        drawNote(o.x, o.y, o.w, o.h, o.pitch);
+      }
+    });
+
+    // coins/powerups
+    coins.forEach(c => {
+      if (c.isPower) drawPower(c.x, c.y, c.r, c.powerType);
+      else drawCoin(c.x, c.y, c.r);
+    });
+
+    // player (ninja body + face)
+    drawPlayer();
+
+    // particles
+    particles.forEach(p => { ctx.fillStyle = 'rgba(220,220,220,0.9)'; ctx.fillRect(p.x, p.y, 3, 3); });
+
+    // power timers HUD update
+    updatePowerHUD();
+  }
+  // Draw helpers
+  function drawCloud(x,y,w){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.beginPath();
+    ctx.ellipse(0,0,w*0.45,w*0.28,0,0,Math.PI*2);
+    ctx.ellipse(w*0.28,-6,w*0.3,w*0.18,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawNote(x, y, w, h, pitch) {
+  ctx.save();
+  ctx.translate(x, y);
+
+  ctx.fillStyle = '#222';
+  ctx.strokeStyle = '#222';
+  ctx.lineWidth = 2;
+
+  // pick note type randomly
+  const noteTypes = ['whole','half','quarter','eighth','sixteenth','thirtysecond','dotted','clef'];
+  const type = noteTypes[Math.floor(Math.random() * noteTypes.length)];
+
+  // Note head (oval)
+  ctx.beginPath();
+  ctx.ellipse(0, 0, h*0.5, h*0.35, -0.4, 0, Math.PI*2);
+  if (['whole','half'].includes(type)) ctx.stroke();
+  else ctx.fill();
+
+  // Stem
+  if (type !== 'whole') {
+    ctx.beginPath();
+    ctx.moveTo(h*0.5, 0);
+    ctx.lineTo(h*0.5, -h*1.8);
+    ctx.stroke();
+  }
+
+  // Flags
+  if (type === 'eighth' || type === 'dotted') {
+    ctx.beginPath();
+    ctx.moveTo(h*0.5, -h*1.8);
+    ctx.quadraticCurveTo(h*1.6, -h*1.5, h*0.8, -h*1.2);
+    ctx.stroke();
+  }
+  if (type === 'sixteenth') {
+    for (let i=0;i<2;i++) {
+      ctx.beginPath();
+      ctx.moveTo(h*0.5, -h*1.8 + i*6);
+      ctx.quadraticCurveTo(h*1.6, -h*1.5 + i*6, h*0.8, -h*1.2 + i*6);
+      ctx.stroke();
+    }
+  }
+  if (type === 'thirtysecond') {
+    for (let i=0;i<3;i++) {
+      ctx.beginPath();
+      ctx.moveTo(h*0.5, -h*1.8 + i*6);
+      ctx.quadraticCurveTo(h*1.6, -h*1.5 + i*6, h*0.8, -h*1.2 + i*6);
+      ctx.stroke();
+    }
+  }
+
+  // Dotted note
+  if (type === 'dotted') {
+    ctx.beginPath();
+    ctx.arc(h*0.9, -2, 3, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // Clef special case 🎼
+  if (type === 'clef') {
+    ctx.font = `${h*2}px serif`;
+    ctx.fillText('𝄞', -h, h/2);
+  }
+
+  ctx.restore();
+}
+
+
+  function drawCoin(x,y,r){
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle = '#ffd24d'; ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(x-2,y-r+2, r*0.6, 3);
+    ctx.restore();
+  }
+
+  function drawPower(x,y,r,type){
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+    if (type === 'shield') ctx.fillStyle = '#74d0e8';
+    else if (type === 'magnet') ctx.fillStyle = '#ffd27a';
+    else if (type === 'katana') ctx.fillStyle = '#d9d9ff';
+    else if (type === 'double') ctx.fillStyle = '#d1f7d8';
+    ctx.fill();
+   function drawPower(x, y, r, type){
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI*2);
+
+  // background color based on type
+  if (type === 'shield') ctx.fillStyle = '#74d0e8';
+  else if (type === 'magnet') ctx.fillStyle = '#ffd27a';
+  else if (type === 'katana') ctx.fillStyle = '#d9d9ff';
+  else if (type === 'double') ctx.fillStyle = '#d1f7d8';
+  ctx.fill();
+
+  // draw icon
+  ctx.fillStyle = '#013334';
+  ctx.font = '14px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  if (type === 'shield'){
+    ctx.fillText('⛨', x, y);   // Shield emoji
+  } 
+  else if (type === 'magnet'){
+    ctx.fillText('🧲', x, y);   // Magnet emoji
+  } 
+  else if (type === 'claw'){
+    ctx.fillText('🐾', x, y);   // Claw print emoji
+  } 
+  else if (type === 'double'){
+    ctx.fillText('✨', x, y);   // Sparkles for double points
+  }
+
+  ctx.restore();
+}
+
+    ctx.restore();
+  }
+
+ 
+
+
+// --- Improved Dinosaur Drawing ---
+// --- Robust drawPlayer() — replace your existing drawPlayer function with this ---
+function drawPlayer(){
+  const p = player;
+  ctx.save();
+  ctx.translate(p.x, p.y);
+
+  const legSwing = Math.sin(frame * 0.25) * 5;
+  const bodyColor = "#3b8c3b";
+  const bellyColor = "#2f6e2f";
+
+  // Body
+  ctx.fillStyle = bodyColor;
+  ctx.beginPath();
+  ctx.ellipse(p.w/2, -p.h/2 + 12, p.w*1.0, p.h*0.55, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Tail
+  ctx.beginPath();
+  ctx.moveTo(p.w/2 - 15, -p.h/2 + 8);
+  ctx.quadraticCurveTo(-30, -p.h/2 + 5, -45, -p.h/2 + 18);
+  ctx.quadraticCurveTo(-25, -p.h/2 + 16, p.w/2 - 15, -p.h/2 + 12);
+  ctx.fill();
+
+  // Legs
+  ctx.fillStyle = bellyColor;
+  ctx.fillRect(p.w/2 - 10, 0, 10, 22 + legSwing);
+  ctx.fillRect(p.w/2 + 6, 0, 10, 22 - legSwing);
+
+  // Arms
+  ctx.fillRect(p.w/2 + 4, -p.h/2 + 10, 6, 14);
+  ctx.fillRect(p.w/2 - 12, -p.h/2 + 10, 6, 14);
+
+  // Head area (compute once)
+  const headX = p.w + 18;
+  const headY = -p.h + 14;
+  const headW = p.w * 0.8;
+  const headH = p.h * 0.55;
+
+  if (avatarImg){
+  // Avatar clipped in oval
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(headX, headY, headW, headH, 0, 0, Math.PI*2);
+  ctx.clip();
+  ctx.drawImage(avatarImg, headX - headW, headY - headH, headW*2, headH*2);
+  ctx.restore();
+
+  // 👉 Expression bubble (eyes + mouth) always separate from avatar
+  const bubbleX = headX + headW + 22;
+  const bubbleY = headY;
+  const bubbleR = 14;
+
+  // Bubble background
+  ctx.fillStyle = "#fff";
+  ctx.beginPath();
+  ctx.arc(bubbleX, bubbleY, bubbleR, 0, Math.PI*2);
+  ctx.fill();
+  ctx.strokeStyle = "#000";
+  ctx.stroke();
+
+  // Eyes inside bubble
+  ctx.fillStyle = "#000";
+  ctx.beginPath();
+  ctx.arc(bubbleX - 5, bubbleY - 3, 2, 0, Math.PI*2); // left eye
+  ctx.arc(bubbleX + 5, bubbleY - 3, 2, 0, Math.PI*2); // right eye
+  ctx.fill();
+
+  // Mouth inside bubble
+  ctx.beginPath();
+  if (p.sadTimer > 0){
+    ctx.arc(bubbleX, bubbleY + 4, 6, Math.PI*0.2, Math.PI*0.8, true);
+  } else if (p.smileTimer > 0){
+    ctx.arc(bubbleX, bubbleY + 4, 6, Math.PI*0.2, Math.PI*0.8, false);
+    p.smileTimer--;
+  } else {
+    ctx.moveTo(bubbleX - 5, bubbleY + 5);
+    ctx.lineTo(bubbleX + 5, bubbleY + 5);
+  }
+  ctx.stroke();
+
+  } else {
+    // Default drawn head
+    ctx.fillStyle = bodyColor;
+    ctx.beginPath();
+    ctx.ellipse(headX, headY, headW, headH, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Eyes on head
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(headX - 8, headY - 6, 5, 0, Math.PI*2);
+    ctx.arc(headX + 8, headY - 6, 5, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle = "#000";
+    ctx.beginPath();
+    ctx.arc(headX - 8, headY - 6, 2, 0, Math.PI*2);
+    ctx.arc(headX + 8, headY - 6, 2, 0, Math.PI*2);
+    ctx.fill();
+
+    // Mouth on head (shifted higher)
+ctx.strokeStyle = "#000";
+ctx.lineWidth = 2;
+ctx.beginPath();
+if (p.sadTimer > 0){
+  ctx.arc(headX, headY + 5, 8, Math.PI*0.2, Math.PI*0.8, true);  // moved UP
+} else if (p.smileTimer > 0){
+  ctx.arc(headX, headY + 5, 8, Math.PI*0.2, Math.PI*0.8, false); // moved UP
+  p.smileTimer--;
+} else {
+  ctx.moveTo(headX - 6, headY + 6);  // moved UP
+  ctx.lineTo(headX + 6, headY + 6);
+}
+ctx.stroke();
+}
+
+  ctx.restore();
+}
+
+
+// Draw Bird (flapping) — styled similarly to the dino (canvas shapes), requires ducking to avoid
+function drawBird(x, y, w, h, o){
+  // o.flapTick drives wing position; flap speed scaled by global frame to sync nicely
+  const tick = (o && o.flapTick) ? o.flapTick : frame;
+  const flapPhase = Math.sin((tick + (o.flapOffset||0)) * 0.36); // -1..1
+  const wingFold = (flapPhase + 1) / 2; // 0..1 (0 wings up, 1 wings down)
+  ctx.save();
+  ctx.translate(x, y);
+
+  // Body (ellipse)
+  ctx.fillStyle = '#3b8c3b';
+  ctx.beginPath();
+  ctx.ellipse(w*0.5, h*0.5, w*0.5, h*0.45, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Belly
+  ctx.fillStyle = '#2f6e2f';
+  ctx.beginPath();
+  ctx.ellipse(w*0.5, h*0.6, w*0.35, h*0.28, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Head (small circle)
+  ctx.fillStyle = '#3b8c3b';
+  ctx.beginPath();
+  ctx.arc(w*0.12, h*0.35, Math.max(4, Math.round(h*0.22)), 0, Math.PI*2);
+  ctx.fill();
+
+  // Beak
+  ctx.fillStyle = '#ffd27a';
+  ctx.beginPath();
+  ctx.moveTo(w*0.05, h*0.35);
+  ctx.lineTo(-2, h*0.32);
+  ctx.lineTo(-2, h*0.38);
+  ctx.closePath();
+  ctx.fill();
+
+  // Eye
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(w*0.08, h*0.33, 2, 0, Math.PI*2);
+  ctx.fill();
+
+  // Wings (animated)
+  // left wing
+  ctx.save();
+  const leftWingX = w*0.35, leftWingY = h*0.25;
+  ctx.translate(leftWingX, leftWingY);
+  // rotation range: -0.9 (up) to +0.6 (down)
+  const leftAngle = -0.9 + (wingFold * (1.5));
+  ctx.rotate(leftAngle);
+  ctx.fillStyle = '#2f6e2f';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, w*0.38, h*0.18, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+
+  // right wing (mirrored)
+  ctx.save();
+  const rightWingX = w*0.65, rightWingY = h*0.25;
+  ctx.translate(rightWingX, rightWingY);
+  const rightAngle = 0.9 - (wingFold * (1.5));
+  ctx.rotate(rightAngle);
+  ctx.fillStyle = '#2f6e2f';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, w*0.38, h*0.18, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+
+  // Tail
+  ctx.fillStyle = '#2f6e2f';
+  ctx.beginPath();
+  ctx.moveTo(w - 4, h*0.5);
+  ctx.lineTo(w + 10, h*0.45);
+  ctx.lineTo(w + 6, h*0.6);
+  ctx.closePath();
+  ctx.fill();
+
+  // Simple wing motion accent (a darker stroke)
+  ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+  // Update power HUD fills & text
+  function updatePowerHUD(){
+    const secs = (framesToSec(powers.shield)).toFixed(1);
+    pShieldFill.style.width = percent(powers.shield) + '%'; pShieldSec.textContent = powers.shield > 0 ? secs + 's' : '';
+    pMagnetFill.style.width = percent(powers.magnet) + '%'; pMagnetSec.textContent = powers.magnet > 0 ? framesToSec(powers.magnet).toFixed(1) + 's' : '';
+    pKatanaFill.style.width = percent(powers.katana) + '%'; pKatanaSec.textContent = powers.katana > 0 ? framesToSec(powers.katana).toFixed(1) + 's' : '';
+    pDoubleFill.style.width = percent(powers.double) + '%'; pDoubleSec.textContent = powers.double > 0 ? framesToSec(powers.double).toFixed(1) + 's' : '';
+  }
+  function framesToSec(f){ return f/60; }
+  function percent(fr){ return Math.min(100, Math.round((fr/POWER_FRAMES)*100)); }
+
+  // Helper to show/hide overlays
+  overlayStart.classList.add('show');
+
+  // Share score
+  function shareScore(){
+    const text = `I scored ${score} in Inday-na-sore!`;
+    if (navigator.share) navigator.share({ title:'Inday-na-sore', text, url: location.href });
+    else prompt('Copy your score to share', text + ' — ' + location.href);
+  }
+
+  // Start music / unlock audio
+  document.addEventListener('click', function unlock(){
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    document.removeEventListener('click', unlock);
+  });
+
+  // Periodic save high score
+  setInterval(()=> {
+    if (score > best) { best = score; localStorage.setItem('inday_best', String(best)); bestEl.textContent = best; }
+  }, 1500);
+
+  // Initialize world
+  resetWorld();
+
+  // Expose for debugging
+  window.indayGame = { start, restart, activatePower: activatePower };
+
+  // ---------- END IIFE ----------
+})();
+</script>
+</body>
+</html>
