@@ -11,22 +11,18 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden; /* so particles don't scroll */
-
-      /* Animated gradient */
+      overflow: hidden;
       background: linear-gradient(270deg, #0a4c5a, #2a9d8f, #e76f51, #264653);
       background-size: 800% 800%;
       animation: gradientAnimation 20s ease infinite;
     }
 
-    /* Gradient animation */
     @keyframes gradientAnimation {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
 
-    /* Canvas for particles */
     #particles {
       position: fixed;
       top: 0;
@@ -34,7 +30,7 @@
       width: 100%;
       height: 100%;
       z-index: 0;
-      pointer-events: none; /* let clicks pass through */
+      pointer-events: none;
     }
 
     .container {
@@ -46,7 +42,7 @@
       border-radius: 10px;
       overflow: hidden;
       transition: all 0.3s ease;
-      z-index: 1; /* ensure it stays above particles */
+      z-index: 1;
       position: relative;
     }
 
@@ -133,7 +129,7 @@
       border-radius: 4px;
       position: absolute;
       z-index: 1;
-      bottom: 110%;
+      top: 110%; /* ✅ moved BELOW input */
       left: 5px;
       opacity: 0;
       transition: opacity 0.2s;
@@ -199,9 +195,7 @@
       background-color: #066377;
     }
 
-    .hidden {
-      display: none;
-    }
+    .hidden { display: none; }
 
     .link {
       font-size: 14px;
@@ -252,11 +246,6 @@
 
     .buttons button:hover {
       background: #066377;
-    }
-
-    .buttons button.equal {
-      grid-row: span 3;
-      height: 100%;
     }
 
     /* Logout bottom-right */
@@ -331,6 +320,105 @@
       from {opacity: 0; transform: scale(0.9);}
       to {opacity: 1; transform: scale(1);}
     }
+
+    /* User Menu */
+.user-menu {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+}
+
+.user-icon {
+  width: 44px;         /* same width/height for perfect circle */
+  height: 44px;
+  border-radius: 50%;  /* makes it circular */
+  object-fit: cover;   /* ensures the image fills the circle without distortion */
+  border: 2px solid var(--teal); /* optional: add a border */
+  cursor: pointer;
+}
+
+
+.user-icon:hover {
+  background: #066377;
+}
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  right: 0;
+  margin-top: 5px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+.dropdown a {
+  display: block;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #0a4c5a;
+  font-weight: bold;
+}
+
+.dropdown a:hover {
+  background: #f0f0f0;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Calculator Header with User Menu */
+.calculator-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-icon {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #0a4c5a;
+}
+
+.user-menu .dropdown {
+  position: absolute;
+  right: 0;
+  top: 50px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  padding: 8px 0;
+  min-width: 120px;
+  z-index: 10;
+}
+
+.user-menu .dropdown a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #0a4c5a;
+  font-weight: bold;
+}
+
+.user-menu .dropdown a:hover {
+  background: #f1f1f1;
+}
+
+.hidden {
+  display: none;
+}
+
   </style>
 </head>
 <body>
@@ -417,37 +505,96 @@
     </div>
 
     <!-- CALCULATOR SECTION -->
-    <div id="calculatorSection" class="hidden">
-      <div class="welcome-msg" id="calcWelcome">Welcome, User 🧮</div>
-      <h2>Calculator</h2>
-      <div class="calculator">
-        <input type="text" id="result" disabled>
-        <div class="buttons">
-          <button onclick="clearResult()">C</button>
-          <button onclick="appendValue('/')">÷</button>
-          <button onclick="appendValue('*')">×</button>
-          <button onclick="appendValue('-')">−</button>
-          <button onclick="appendValue('7')">7</button>
-          <button onclick="appendValue('8')">8</button>
-          <button onclick="appendValue('9')">9</button>
-          <button onclick="appendValue('+')">+</button>
-          <button onclick="appendValue('4')">4</button>
-          <button onclick="appendValue('5')">5</button>
-          <button onclick="appendValue('6')">6</button>
-          <button onclick="calculateResult()" class="equal">=</button>
-          <button onclick="appendValue('1')">1</button>
-          <button onclick="appendValue('2')">2</button>
-          <button onclick="appendValue('3')">3</button>
-          <button onclick="appendValue('0')" style="grid-column: span 2;">0</button>
-          <button onclick="appendValue('.')">.</button>
-        </div>
-      </div>
-      <div class="logout-container">
+<div id="calculatorSection" class="hidden">
+  <div class="calculator-header">
+    <div class="welcome-msg" id="calcWelcome">Welcome, User 🧮</div>
+    <div class="user-menu">
+      <img src="Media/user-icon.png" alt="User" class="user-icon" onclick="toggleUserMenu()">
+      <div class="dropdown hidden" id="userDropdown">
         <a href="#" onclick="logout()">Logout</a>
       </div>
     </div>
   </div>
+  
+  <h2>Calculator</h2>
+  <div class="calculator">
+    <input type="text" id="result" disabled>
+    <div class="buttons">
+      <button onclick="clearResult()">C</button>
+      <button onclick="backspace()">⌫</button>
+      <button onclick="appendValue('.')">.</button>
+      <button onclick="appendValue('/')">÷</button>
+
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button onclick="appendValue('*')">×</button>
+
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+      <button onclick="appendValue('-')">−</button>
+
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+      <button onclick="appendValue('+')">+</button>
+
+      <button onclick="appendValue('0')" style="grid-column: span 2;">0</button>
+      <button onclick="appendValue('%')">%</button>
+      <button onclick="calculateResult()">=</button>
+    </div>
+  </div>
 </div>
+
+
+     <!-- CALCULATOR SECTION -->
+<div id="calculatorSection" class="hidden">
+
+  <!-- User Menu with Dropdown -->
+  <div class="user-menu">
+    <button class="user-icon" onclick="toggleUserMenu()">
+  <img src="Media/user-icon.png" alt="User" />
+</button>
+
+    <div id="userDropdown" class="dropdown hidden">
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+  </div>
+
+  <div class="welcome-msg" id="calcWelcome">Welcome, User 🧮</div>
+  <h2>Calculator</h2>
+
+  <div class="calculator">
+    <input type="text" id="result" disabled>
+    <div class="buttons">
+      <button onclick="clearResult()">C</button>
+      <button onclick="backspace()">⌫</button>
+      <button onclick="appendValue('.')">.</button>
+      <button onclick="appendValue('/')">÷</button>
+
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button onclick="appendValue('*')">×</button>
+
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+      <button onclick="appendValue('-')">−</button>
+
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+      <button onclick="appendValue('+')">+</button>
+
+      <button onclick="appendValue('0')" style="grid-column: span 2;">0</button>
+      <button onclick="appendValue('%')">%</button>
+      <button onclick="calculateResult()">=</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- MODAL -->
 <div id="modalOverlay" class="modal-overlay">
@@ -459,14 +606,11 @@
 </div>
 
 <script>
-  // Section switch
   function showSection(sectionId) {
     document.getElementById('loginSection').classList.add('hidden');
     document.getElementById('signupSection').classList.add('hidden');
     document.getElementById('calculatorSection').classList.add('hidden');
-
     document.getElementById(sectionId).classList.remove('hidden');
-
     const container = document.querySelector('.container');
     if (sectionId === 'calculatorSection') {
       container.classList.add('calculator-mode');
@@ -475,7 +619,6 @@
     }
   }
 
-  // Toggle password
   function togglePassword(inputId, eye) {
     const input = document.getElementById(inputId);
     if (input.type === "password") {
@@ -487,7 +630,6 @@
     }
   }
 
-  // Validators
   function isValidPassword(pwd) {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     return regex.test(pwd);
@@ -496,19 +638,17 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
   function isValidPhone(phone) {
-    return /^09\d{9}$/.test(phone); // must start with 09 + 9 digits
+    return /^09\d{9}$/.test(phone);
   }
 
-  // Restrict phone input to numbers only
   const phoneInput = document.getElementById('signupPhone');
   phoneInput.addEventListener("input", function () {
-    this.value = this.value.replace(/\D/g, ""); // remove non-digits immediately
+    this.value = this.value.replace(/\D/g, "");
     if (this.value.length > 11) {
-      this.value = this.value.slice(0, 11); // limit to 11 digits
+      this.value = this.value.slice(0, 11);
     }
   });
 
-  // Modal
   function showModal(title, message) {
     document.getElementById('modalTitle').innerText = title;
     document.getElementById('modalMessage').innerText = message;
@@ -518,29 +658,22 @@
     document.getElementById('modalOverlay').style.display = "none";
   }
 
-  // Forgot password
   function forgotPassword() {
     showModal("Forgot Password", "Password reset functionality is not available yet.");
   }
 
-  // Signup
   document.getElementById('signupForm').addEventListener('submit', function(e) {
     e.preventDefault();
-
     const name = document.getElementById('signupName').value.trim();
     const email = document.getElementById('signupEmail').value.trim();
     const phone = document.getElementById('signupPhone').value.trim();
     const password = document.getElementById('signupPassword').value;
     const confirm = document.getElementById('signupConfirm').value;
-
     let valid = true;
-
     if (!name) { document.getElementById('signupNameError').style.display = "block"; valid = false; }
     else { document.getElementById('signupNameError').style.display = "none"; }
-
     if (!isValidEmail(email)) { document.getElementById('signupEmailError').style.display = "block"; valid = false; }
     else { document.getElementById('signupEmailError').style.display = "none"; }
-
     if (!isValidPhone(phone)) { 
       document.getElementById('signupPhoneError').innerText = "Phone number must start with 09 and be exactly 11 digits.";
       document.getElementById('signupPhoneError').style.display = "block"; 
@@ -548,13 +681,10 @@
     } else { 
       document.getElementById('signupPhoneError').style.display = "none"; 
     }
-
     if (!isValidPassword(password)) { document.getElementById('signupPasswordError').style.display = "block"; valid = false; }
     else { document.getElementById('signupPasswordError').style.display = "none"; }
-
     if (password !== confirm) { document.getElementById('signupConfirmError').style.display = "block"; valid = false; }
     else { document.getElementById('signupConfirmError').style.display = "none"; }
-
     if (valid) {
       localStorage.setItem('user', JSON.stringify({ name, email, phone, password }));
       showModal("Account Created", "Your account has been created successfully. Please login.");
@@ -562,23 +692,18 @@
     }
   });
 
-  // Login
   document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
-
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
     const storedUser = JSON.parse(localStorage.getItem('user'));
-
     let valid = true;
-
     if (!isValidEmail(email)) {
       document.getElementById('loginEmailError').style.display = "block";
       valid = false;
     } else {
       document.getElementById('loginEmailError').style.display = "none";
     }
-
     if (valid && storedUser && storedUser.email === email && storedUser.password === password) {
       showModal("Login Successful", "Welcome, " + storedUser.name + "!");
       document.getElementById('calcWelcome').innerText = "Welcome, " + storedUser.name + " 🧮";
@@ -588,9 +713,12 @@
     }
   });
 
-      // Calculator
   function appendValue(val) { document.getElementById('result').value += val; }
   function clearResult() { document.getElementById('result').value = ''; }
+  function backspace() {
+    let current = document.getElementById('result').value;
+    document.getElementById('result').value = current.slice(0, -1);
+  }
   function calculateResult() {
     try {
       document.getElementById('result').value = eval(document.getElementById('result').value);
@@ -598,26 +726,21 @@
       showModal("Error", "Invalid expression entered.");
     }
   }
+function toggleUserMenu() {
+  document.getElementById("userDropdown").classList.toggle("hidden");
+}
 
+  function logout() { showSection('loginSection'); }
 
-
-  // Logout
-  function logout() {
-    showSection('loginSection');
-  }
-
-  // === PARTICLE BACKGROUND ===
   const canvas = document.getElementById("particles");
   const ctx = canvas.getContext("2d");
   let particlesArray;
-
   function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }
   window.addEventListener("resize", resizeCanvas);
   resizeCanvas();
-
   class Particle {
     constructor() {
       this.x = Math.random() * canvas.width;
@@ -629,7 +752,6 @@
     update() {
       this.x += this.speedX;
       this.y += this.speedY;
-
       if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
       if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
     }
@@ -641,25 +763,33 @@
       ctx.fill();
     }
   }
-
   function initParticles() {
     particlesArray = [];
     for (let i = 0; i < 80; i++) {
       particlesArray.push(new Particle());
     }
   }
-
   function animateParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particlesArray.forEach(p => {
-      p.update();
-      p.draw();
-    });
+    particlesArray.forEach(p => { p.update(); p.draw(); });
     requestAnimationFrame(animateParticles);
   }
-
   initParticles();
   animateParticles();
+
+  function toggleUserMenu() {
+  document.getElementById("userDropdown").classList.toggle("hidden");
+}
+
+// Close dropdown if clicking outside
+window.addEventListener("click", function(e) {
+  if (!e.target.matches('.user-icon')) {
+    let dropdown = document.getElementById("userDropdown");
+    if (dropdown && !dropdown.classList.contains("hidden")) {
+      dropdown.classList.add("hidden");
+    }
+  }
+});
 </script>
 </body>
 </html>
